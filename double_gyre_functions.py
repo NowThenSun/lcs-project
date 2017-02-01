@@ -122,5 +122,5 @@ def analytic_velocity(coordinates, time_array):
 	
 
 
-main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10., nx=200, ny=100, aux_grid_spacing=1.*10**-5, t_0=0., int_time=10., adaptive_error_tol=1.*10**-4, dt_i=0.0001)
+#main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10., nx=200, ny=100, aux_grid_spacing=1.*10**-5, t_0=0., int_time=10., adaptive_error_tol=1.*10**-4, dt_i=0.0001)
 

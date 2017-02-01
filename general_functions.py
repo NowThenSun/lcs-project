@@ -47,6 +47,32 @@ def rk4(y, time, dt, derivs):
 	y_next = y + (k0+2.*k1+2.*k2+k3)/6.
 	return y_next
 	
+def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
+    '''
+    Function that performs the rk4 loop over an auxiliary grid.
+    ~~~~~~~~~
+    Inputs:
+    derivs = function that returns the derivatives of the positions (velocity)
+    aux_grid = 2*ny*nx(*4) initial grid of coordinatesd
+    t_0 = initial time before timestepping begins
+    int_time = time integrated over
+    dt = fixed timestep
+    dt_i = "initial timestep" - just used to keep for loop long
+    ~~~~~~~~~
+    Outputs:
+    positions = final array of positions
+    '''
+    # Initialise positions array to aux. grid
+    positions = aux_grid
+    # Initialise time
+    time = t_0
+    for k in xrange(np.int(np.abs(int_time/dt_i))):
+        if np.any(np.abs(time - t_0)<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
+            positions = rk4(positions, time, dt, derivs)
+            time += dt  
+            print k, "current time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+    
+    return positions
 
 def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	'''
@@ -78,7 +104,7 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	s = np.zeros_like(y_next)
 	s = (adaptive_error_tol/(2.*np.abs(z_next-y_next)))**0.25 
 	#print np.abs(z_next-y_next)	
-	print "s values......", np.min(s),np.max(s), np.average(s)
+	#print "s values......", np.min(s),np.max(s), np.average(s)
 
 	return y_next, s
 	
@@ -120,7 +146,7 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
             #dt = step[1]
             positions = step[0]
             time_array += dt_final
-            print "final time (not to be evaluated at):", np.average(time_array)
+            #print "final time (not to be evaluated at):", np.average(time_array)
             break
         
         # If neither of above conditions met code will do the normal time-stepping method below
@@ -129,7 +155,7 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
             dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
             positions = step[0] #positions = rk4(positions,time_array, dt,gyre_analytic)
             time_array += dt  
-            print k, "average time =", np.average(time_array), "~~~~~~~~dt =", np.average(dt)
+            #print k, "average time =", np.average(time_array), "~~~~~~~~dt =", np.average(dt)
 
     return positions
 	
