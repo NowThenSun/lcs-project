@@ -20,6 +20,9 @@ $RECYCLE.BIN/
 #Data files
 *.nc
 
+#Other old files
+old_code/
+
 
 # =========================
 # Operating System Files
