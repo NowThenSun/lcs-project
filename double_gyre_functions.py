@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 import general_functions as fn
 
-def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, adaptive_error_tol, dt_i):
+def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, adaptive_error_tol, dt_i, method ='rkf45_fixed'):
 	'''
 	Main function that puts together other functions to compute the FTLE field of the double gyre
 	~~~~~~~~~~
@@ -34,9 +34,20 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 	
 	a_grid = fn.generate_auxiliary_grid(generate_grid(nx,ny), aux_grid_spacing=aux_grid_spacing)
 	#~~print np.shape(a_grid)
-	# Perform rkf45 loop
-	final_pos = fn.rkf45_loop_fixed_step(derivs=analytic_velocity, aux_grid=a_grid, adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_i=dt_i)
 	
+	if method == 'rkf45_fixed':
+		# Perform rkf45 loop for fixed step on all grid points
+		final_pos = fn.rkf45_loop_fixed_step(derivs=analytic_velocity, aux_grid=a_grid, adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_i=dt_i)
+		print "RKF45 fixed time step method used"
+	
+	if method == 'rk4':
+		# Perform rk4 loop procedure
+	
+		print "RK4 method used"
+	
+	if method == 'rkf45':
+			
+		print "RKF45 full adaptive grid method used"
 	# Calculate jacobian matrix
 	jac = fn.jacobian_matrix_aux(final_pos,aux_grid_spacing=aux_grid_spacing)
 	cgst = fn.cauchy_green_tensor(jac)
@@ -111,5 +122,5 @@ def analytic_velocity(coordinates, time_array):
 	
 
 
-#main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10., nx=200, ny=100, aux_grid_spacing=1.*10**-5, t_0=0., int_time=10., adaptive_error_tol=1.*10**-4, dt_i=0.0001)
+main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10., nx=200, ny=100, aux_grid_spacing=1.*10**-5, t_0=0., int_time=10., adaptive_error_tol=1.*10**-4, dt_i=0.0001)
 

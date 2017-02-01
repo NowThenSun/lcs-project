@@ -135,17 +135,26 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 	
 	
 	
-def rkf45_loop(aux_grid, adaptive_error_tol):
+def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i):
 	'''
-	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid
+	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with timesteps varying for different points in the grid.
 	~~~~~~~~~
 	Inputs:
-	
+	derivs = function that returns the derivatives of the positions (velocity)
+	aux_grid = 2*ny*nx(*4) initial grid of coordinates
+	adaptive_error_tol = error tolerance in rkf45 method
+	t_0 = initial time before timestepping begins
+	int_time = time integrated over
+	dt_i = initial timestep (chosen to be much lower than expected adaptive step size)
 	~~~~~~~~~
 	Outputs:
 	positions = final array of positions
-	'''	
+	'''
+	
+	pass
+	
 
+	
 def jacobian_matrix_aux(aux_grid_f, aux_grid_spacing):
 	'''
 	Function that calculates the jacobian matrix for the flow of an auxiliary grid of points using a 2nd order central finite differences method.
