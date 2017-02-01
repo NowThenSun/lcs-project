@@ -20,9 +20,11 @@ $RECYCLE.BIN/
 #Data files
 *.nc
 
-#Other old files
+#Other files to ignore:
+#Old code
 old_code/
-
+# Python leftover files
+*.pyc
 
 # =========================
 # Operating System Files
