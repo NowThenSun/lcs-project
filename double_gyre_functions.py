@@ -23,6 +23,7 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 	t_0 = initial time to start integration at
 	int_time = time integrated over
 	adaptive_error_tol = error tolerance used in the adaptive timestep integration scheme
+	method = method used for numerical integration -- currently only supports rkf45 fixed
 	~~~~~~~~~~
 	Outputs:
 	ftle = the finite-time Lyapunov exponent for the double gyre in a ny*nx array
@@ -31,31 +32,31 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 	# Globalise double gyre parameters (for convenience of using analytic_velocity in rkf45 loop)
 	dg_params = gyre_global_params(amplitude=amplitude, epsilon=epsilon, omega=omega)
 	#~~gen_params = fn.general_params(nx=nx, ny=ny, aux_grid_spacing=aux_grid_spacing, adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_i=dt_i)
-	
+
 	a_grid = fn.generate_auxiliary_grid(generate_grid(nx,ny), aux_grid_spacing=aux_grid_spacing)
 	#~~print np.shape(a_grid)
-	
+
 	if method == 'rkf45_fixed':
 		# Perform rkf45 loop for fixed step on all grid points
 		final_pos = fn.rkf45_loop_fixed_step(derivs=analytic_velocity, aux_grid=a_grid, adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_i=dt_i)
 		print "RKF45 fixed time step method used"
-	
+
 	if method == 'rk4':
 		# Perform rk4 loop procedure
-	
+
 		print "RK4 method used"
-	
+
 	if method == 'rkf45':
-			
+
 		print "RKF45 full adaptive grid method used"
 	# Calculate jacobian matrix
 	jac = fn.jacobian_matrix_aux(final_pos,aux_grid_spacing=aux_grid_spacing)
 	cgst = fn.cauchy_green_tensor(jac)
-	
+
 	ev = np.linalg.eigvalsh(cgst)
 	ev_max = np.amax(ev,-1)
 	ftle = np.log(ev_max)/(2.*np.abs(int_time))
-	
+
 	return ftle
 
 def gyre_global_params(amplitude, epsilon, omega):
@@ -67,7 +68,7 @@ def gyre_global_params(amplitude, epsilon, omega):
 	global omega_g
 	amplitude_g, epsilon_g, omega_g = amplitude, epsilon, omega
 	return amplitude, epsilon, omega
-	
+
 def generate_grid(nx, ny):
 	'''
 	Generates grid on the domain (x,y)=[0,2]x[0,1]
@@ -79,7 +80,7 @@ def generate_grid(nx, ny):
 	Outputs:
 	coords = 2*ny*nx array of coordinates with [0] component returning the x-component and [1] returning the y-component
 	'''
-
+	
 	xlower = 0.
 	xupper = 2.
 	ylower = 0.
@@ -92,7 +93,7 @@ def generate_grid(nx, ny):
 	coords = np.meshgrid(X, Y, indexing='xy') 			# 2*ny*nx array with [0] component giving x values
 
 	return np.array(coords)#, X_, Y_
-	
+
 def analytic_velocity(coordinates, time_array):
 	'''
 	Function that calculates the analytic velocity for the double gyre for an array of coordinates and array of times
@@ -105,22 +106,21 @@ def analytic_velocity(coordinates, time_array):
 	Outputs:
 	u, v = analytic velocity fields of the double gyre (same shape as the input coordinates)
 	'''
-	
+
 	a = epsilon_g*np.sin(omega_g*time_array)
-	
+
 	b = 1. - 2.*epsilon_g*np.sin(omega_g*time_array)
-	
-	f = a*coordinates[0]**2 + b*coordinates[0]		
+
+	f = a*coordinates[0]**2 + b*coordinates[0]
 	# df = df/dx
-	df = 2.*a*coordinates[0] + b			
-	
+	df = 2.*a*coordinates[0] + b
+
 	u = -np.pi*amplitude_g*np.sin(np.pi*f)*np.cos(np.pi*coordinates[1])
-	
+
 	v = np.pi*amplitude_g*np.cos(np.pi*f)*np.sin(np.pi*coordinates[1])*df
-	
+
 	return u, v  #Note this returns (u,v) as a tuple
-	
+
 
 
 #main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10., nx=200, ny=100, aux_grid_spacing=1.*10**-5, t_0=0., int_time=10., adaptive_error_tol=1.*10**-4, dt_i=0.0001)
-

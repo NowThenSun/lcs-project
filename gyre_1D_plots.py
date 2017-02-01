@@ -17,7 +17,7 @@ x0 = 1.0                                # first x value
 x1 = 1.2                                # final x value
 res = np.array([50,300,1000]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
 actual_res = res*2./(x1-x0)     # True resolution on a full [0,2]x[0,1] double gyre domain
-# double gyre parameters
+# double gyre parameters - Note: dg.gyre_global_params's global parameters have dg. in front of them so primarily exist within the dg module (although can still be called upon here with e.g. dg.amplitude_g)
 dg_params = dg.gyre_global_params(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.)
 # other parameters
 aux_grid_spacing = 1*10**-5
@@ -25,7 +25,7 @@ adaptive_error_tol = 1*10**-4
 t_0 = 0.
 int_time = 10.
 dt_i = np.sign(int_time)*1*10**-4
-dt_fixed = 0.3      # timestep used for RK4 integration
+dt_fixed = 0.1      # timestep used for RK4 integration
 
 #list to put in final data of calculated FTLE fields
 FTLE_list = [] 

@@ -67,13 +67,23 @@ def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
     # Initialise time
     time = t_0
     for k in xrange(np.int(np.abs(int_time/dt_i))):
-        if np.any(np.abs(time - t_0)<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
+        if np.abs(time - t_0<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
             positions = rk4(positions, time, dt, derivs)
             time += dt  
             print k, "current time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
     
     return positions
 
+# def rk4_loop_alt(derivs, aux_grid, t_0, int_time, dt, dt_i):
+    # '''
+    # Quick alternative RK4 test code (don't use for -ve integration times)
+    # '''
+    # positions = aux_grid
+    # for k in xrange(np.int(int_time/dt)+1):
+        # positions = rk4(positions, t_0 + k*dt, dt, derivs)
+    
+    # return positions
+    
 def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	'''
 	Function that moves value of y forward by a single step of size dt by the 4/5th order Runge-Kutta-Fehlberg method that uses adaptive step sizing.
