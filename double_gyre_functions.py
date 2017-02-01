@@ -12,17 +12,17 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 	Inputs:
 	==
 	double-gyre parameters:
-	amplitude = 
-	epsilon = 
-	omega = 
+	amplitude = amplitude of oscillations
+	epsilon = amplitude of time dependent perturbations
+	omega = angular frequency of double gyre system
 	==
 	general parameters:
-	nx
-	ny
-	aux_grid_spacing
-	t_0
-	int_time
-	adaptive_error_tol
+	nx = # points of original grid in x-direction
+	ny = # points of original grid in y-direction
+	aux_grid_spacing = spacing of the auxiliary grid from the original grid used for finite differencing
+	t_0 = initial time to start integration at
+	int_time = time integrated over
+	adaptive_error_tol = error tolerance used in the adaptive timestep integration scheme
 	~~~~~~~~~~
 	Outputs:
 	ftle = the finite-time Lyapunov exponent for the double gyre in a ny*nx array
@@ -82,7 +82,7 @@ def generate_grid(nx, ny):
 
 	return np.array(coords)#, X_, Y_
 	
-def	analytic_velocity(coordinates, time_array):
+def analytic_velocity(coordinates, time_array):
 	'''
 	Function that calculates the analytic velocity for the double gyre for an array of coordinates and array of times
 	~~~~~~~~~~
