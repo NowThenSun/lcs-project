@@ -110,8 +110,8 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	z_next = y  + 16/135.*k1 + 6656/12825.*k3 + 28561/56430.*k4 - 9/50.*k5 + 2/55.*k6
 
 	#scaling factor s (for dt)
-	s = np.zeros_like(y_next)
-	s = (adaptive_error_tol/(2.*np.abs(z_next-y_next)))**0.25
+	s = np.zeros(np.shape(y_next)[1:])
+	s = (adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
 	#print np.abs(z_next-y_next)
 	#print "s values......", np.min(s),np.max(s), np.average(s)
 
