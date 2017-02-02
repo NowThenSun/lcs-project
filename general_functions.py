@@ -165,7 +165,14 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
         else:
             step = rkf45(positions, time_array, dt, derivs, adaptive_error_tol = adaptive_error_tol)
             dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
-            positions = step[0] #positions = rk4(positions,time_array, dt,gyre_analytic)
+			# Set dt = dt_min if dt too small
+			if dt < dt_min: # assuming scalar dt here
+				dt = dt_min
+			# Set = dt_max if dt too large
+			if dt > dt_max:
+				dt = dt_max
+
+			positions = step[0] #positions = rk4(positions,time_array, dt,gyre_analytic)
             time_array += dt
             #print k, "average time =", np.average(time_array), "~~~~~~~~dt =", np.average(dt)
 
