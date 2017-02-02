@@ -23,16 +23,16 @@ def generate_auxiliary_grid(original_grid, aux_grid_spacing):
 	'''
 	#Make sure aux_grid_spacing is a +ve values
 	h = np.abs(aux_grid_spacing)
-	
+
 	#Initialise aux_grid same size as original grid but with extra axis of size 4 at the end
 	aux_grid = np.zeros(np.append(np.shape(original_grid),4))
 	aux_grid[:] = original_grid[...,np.newaxis]
-	
+
 	aux_grid[0,...,0] -= aux_grid_spacing
 	aux_grid[0,...,1] += aux_grid_spacing
 	aux_grid[1,...,2] -= aux_grid_spacing
 	aux_grid[1,...,3] += aux_grid_spacing
-	
+
 	return aux_grid
 
 def rk4(y, time, dt, derivs):
@@ -46,7 +46,7 @@ def rk4(y, time, dt, derivs):
 	k3 = dt*np.array(derivs(y + k2, time + dt))
 	y_next = y + (k0+2.*k1+2.*k2+k3)/6.
 	return y_next
-	
+
 def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
     '''
     Function that performs the rk4 loop over an auxiliary grid.
@@ -69,9 +69,9 @@ def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
     for k in xrange(np.int(np.abs(int_time/dt_i))):
         if np.abs(time - t_0<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
             positions = rk4(positions, time, dt, derivs)
-            time += dt  
+            time += dt
             print k, "current time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
-    
+
     return positions
 
 # def rk4_loop_alt(derivs, aux_grid, t_0, int_time, dt, dt_i):
@@ -81,9 +81,9 @@ def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
     # positions = aux_grid
     # for k in xrange(np.int(int_time/dt)+1):
         # positions = rk4(positions, t_0 + k*dt, dt, derivs)
-    
+
     # return positions
-    
+
 def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	'''
 	Function that moves value of y forward by a single step of size dt by the 4/5th order Runge-Kutta-Fehlberg method that uses adaptive step sizing.
@@ -103,22 +103,22 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	k4 = dt*np.array(derivs(y + a4[0]*k1 + a4[1]*k2 + a4[2]*k3 ,time + np.sum(a4)*dt))
 	k5 = dt*np.array(derivs(y + a5[0]*k1 + a5[1]*k2 + a5[2]*k3 + a5[3]*k4, time + np.sum(a5)*dt))
 	k6 = dt*np.array(derivs(y + a6[0]*k1 + a6[1]*k2 + a6[2]*k3 + a6[3]*k4 + a6[4]*k5, time + np.sum(a6)*dt))
-	
+
 	#4th order method
-	y_next = y + 25/216.*k1 + 1408/2565.*k3 + 2197/4101.*k4 - 1/5.*k5  
-	
+	y_next = y + 25/216.*k1 + 1408/2565.*k3 + 2197/4101.*k4 - 1/5.*k5
+
 	#5th order method
-	z_next = y  + 16/135.*k1 + 6656/12825.*k3 + 28561/56430.*k4 - 9/50.*k5 + 2/55.*k6 
-	
-	#scaling factor s (for dt) 
+	z_next = y  + 16/135.*k1 + 6656/12825.*k3 + 28561/56430.*k4 - 9/50.*k5 + 2/55.*k6
+
+	#scaling factor s (for dt)
 	s = np.zeros_like(y_next)
-	s = (adaptive_error_tol/(2.*np.abs(z_next-y_next)))**0.25 
-	#print np.abs(z_next-y_next)	
+	s = (adaptive_error_tol/(2.*np.abs(z_next-y_next)))**0.25
+	#print np.abs(z_next-y_next)
 	#print "s values......", np.min(s),np.max(s), np.average(s)
 
 	return y_next, s
-	
-def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i):
+
+def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i, dt_min, dt_max):
     '''
     Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with a fixed timestep for ALL points in the grid
     ~~~~~~~~~
@@ -129,15 +129,17 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
     t_0 = initial time before timestepping begins
     int_time = time integrated over
     dt_i = initial timestep (chosen to be much lower than expected adaptive step size)
+	dt_min = impose minimum timestep allowed for adaptive method to choose
+	dt_max = impose maximum timestep allowed for adaptive method to choose
     ~~~~~~~~~
     Outputs:
     positions = final array of positions
     '''
-    # Initialise array of dt and times 
+    # Initialise array of dt and times
     time_array = t_0	# Doesn't have to be an array for time steps that don't vary spatially
     print "timeshape", np.shape(time_array)
     # Use a scalar dt for fixed step rkf45
-    dt = dt_i									
+    dt = dt_i
 
     # Set initial position to aux. grid
     positions = np.zeros_like(aux_grid)
@@ -158,19 +160,19 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
             time_array += dt_final
             #print "final time (not to be evaluated at):", np.average(time_array)
             break
-        
+
         # If neither of above conditions met code will do the normal time-stepping method below
         else:
             step = rkf45(positions, time_array, dt, derivs, adaptive_error_tol = adaptive_error_tol)
             dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
             positions = step[0] #positions = rk4(positions,time_array, dt,gyre_analytic)
-            time_array += dt  
+            time_array += dt
             #print k, "average time =", np.average(time_array), "~~~~~~~~dt =", np.average(dt)
 
     return positions
-	
-	
-	
+
+
+
 def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i):
 	'''
 	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with timesteps varying for different points in the grid.
@@ -186,11 +188,11 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i):
 	Outputs:
 	positions = final array of positions
 	'''
-	
-	pass
-	
 
-	
+	pass
+
+
+
 def jacobian_matrix_aux(aux_grid_f, aux_grid_spacing):
 	'''
 	Function that calculates the jacobian matrix for the flow of an auxiliary grid of points using a 2nd order central finite differences method.
@@ -204,18 +206,18 @@ def jacobian_matrix_aux(aux_grid_f, aux_grid_spacing):
 	jacobian = ny*nx*2*2 array representing the 2x2 Jacobian matrix of the flow at each point of the original grid
 	'''
 	# Initialise Jacobian matrix shape ny*nx*2*2
-	jacobian = np.zeros(np.shape(aux_grid_f)[1:]) 
+	jacobian = np.zeros(np.shape(aux_grid_f)[1:])
 	jacobian = np.reshape(jacobian, np.append(np.shape(aux_grid_f)[1:3],(2,2)))
-	
+
 	# Finite differences to calculate the values of the matrix
 	jacobian[...,0,0] = (aux_grid_f[0,...,1] - aux_grid_f[0,...,0])	# Variation in x wrt x
 	jacobian[...,0,1] = (aux_grid_f[0,...,3] - aux_grid_f[0,...,2])	# Variation in x wrt y
 	jacobian[...,1,0] = (aux_grid_f[1,...,1] - aux_grid_f[1,...,0])	# Variation in y wrt x
 	jacobian[...,1,1] = (aux_grid_f[1,...,3] - aux_grid_f[1,...,2])	# Variation in y wrt y
 	jacobian /= 2.*aux_grid_spacing		# Central differences factor same here since aux. grid spacing is the same in x and y
-	
+
 	return jacobian
-	
+
 def cauchy_green_tensor(jac):
 	'''
 	Function that takes in the Jacobian flow matrix and outputs the Cauchy-Green strain tensor (using CG = J^T * J).
@@ -233,6 +235,5 @@ def cauchy_green_tensor(jac):
 	cgt[...,1,0] = jac[...,0,0]*jac[...,0,1] + jac[...,1,0]*jac[...,1,1]
 	cgt[...,0,1] = jac[...,0,0]*jac[...,0,1] + jac[...,1,0]*jac[...,1,1]
 	cgt[...,1,1] = jac[...,0,1]**2 + jac[...,1,1]**2
-	
-	return cgt
 
+	return cgt
