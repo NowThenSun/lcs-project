@@ -118,7 +118,7 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 
 	return y_next, s
 
-def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i, dt_min, dt_max):
+def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_max):
     '''
     Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with a fixed timestep for ALL points in the grid
     ~~~~~~~~~
@@ -128,42 +128,41 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
     adaptive_error_tol = error tolerance in rkf45 method
     t_0 = initial time before timestepping begins
     int_time = time integrated over
-    dt_i = initial timestep (chosen to be much lower than expected adaptive step size)
 	dt_min = impose minimum timestep allowed for adaptive method to choose
 	dt_max = impose maximum timestep allowed for adaptive method to choose
     ~~~~~~~~~
     Outputs:
     positions = final array of positions
     '''
-    # Initialise array of dt and times
-    time_array = t_0	# Doesn't have to be an array for time steps that don't vary spatially
-    print "timeshape", np.shape(time_array)
-    # Use a scalar dt for fixed step rkf45
-    dt = dt_i
+    # Initialise scalar of dt and times
+    time = t_0	# Doesn't have to be an array for time steps that don't vary spatially
+    print "timeshape", np.shape(time)
+    # set initial dt -- use a scalar dt for fixed step rkf45
+    dt = dt_min
 
     # Set initial position to aux. grid
     positions = np.zeros_like(aux_grid)
     positions[:] = aux_grid[:]
 
-    for k in xrange(np.int(np.abs(int_time/dt_i))):
+    for k in xrange(np.int(np.abs(int_time/dt_min)+1)):
         # Condition that if k*dt = int_time the integration is complete
-        if np.any(np.isclose(np.abs(int_time),np.abs(time_array-t_0))):
+        if np.any(np.isclose(np.abs(int_time),np.abs(time-t_0))):
             break
 
         # Condition that if integration time left is less than a full step of dt a new dt is defined so the integration ends exactly after stepping through int_time
-        elif np.any(np.abs(int_time)-np.abs(time_array-t_0)<np.abs(dt)):
-            dt_final = np.sign(dt)*(np.abs(int_time)-np.abs(time_array-t_0))
+        elif np.any(np.abs(int_time)-np.abs(time-t_0)<np.abs(dt)):
+            dt_final = np.sign(dt)*(np.abs(int_time)-np.abs(time-t_0))
             #print "final dt step:", dt_final
-            step = rkf45(positions, time_array, dt_final, derivs, adaptive_error_tol = adaptive_error_tol)
+            step = rkf45(positions, time, dt_final, derivs, adaptive_error_tol = adaptive_error_tol)
             #dt = step[1]
             positions = step[0]
-            time_array += dt_final
-            #print "final time (not to be evaluated at):", np.average(time_array)
+            time += dt_final
+            #print "final time (not to be evaluated at):", np.average(time)
             break
 
         # If neither of above conditions met code will do the normal time-stepping method below
         else:
-            step = rkf45(positions, time_array, dt, derivs, adaptive_error_tol = adaptive_error_tol)
+            step = rkf45(positions, time, dt, derivs, adaptive_error_tol = adaptive_error_tol)
             dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
 			# Set dt = dt_min if dt too small
 			if dt < dt_min: # assuming scalar dt here
@@ -172,9 +171,9 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 			if dt > dt_max:
 				dt = dt_max
 
-			positions = step[0] #positions = rk4(positions,time_array, dt,gyre_analytic)
-            time_array += dt
-            #print k, "average time =", np.average(time_array), "~~~~~~~~dt =", np.average(dt)
+			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
+            time += dt
+            #print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
     return positions
 
