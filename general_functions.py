@@ -47,7 +47,7 @@ def rk4(y, time, dt, derivs):
 	y_next = y + (k0+2.*k1+2.*k2+k3)/6.
 	return y_next
 
-def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
+def rk4_loop(derivs, aux_grid, t_0, int_time, dt):
     '''
     Function that performs the rk4 loop over an auxiliary grid.
     ~~~~~~~~~
@@ -57,7 +57,6 @@ def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
     t_0 = initial time before timestepping begins
     int_time = time integrated over
     dt = fixed timestep
-    dt_i = "initial timestep" - just used to keep for loop long
     ~~~~~~~~~
     Outputs:
     positions = final array of positions
@@ -66,7 +65,7 @@ def rk4_loop(derivs, aux_grid, t_0, int_time, dt, dt_i):
     positions = aux_grid
     # Initialise time
     time = t_0
-    for k in xrange(np.int(np.abs(int_time/dt_i))):
+    for k in xrange(np.int(np.abs(int_time/dt))):
         if np.abs(time - t_0<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
             positions = rk4(positions, time, dt, derivs)
             time += dt
@@ -144,7 +143,7 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
     positions = np.zeros_like(aux_grid)
     positions[:] = aux_grid[:]
 
-    for k in xrange(np.int(np.abs(int_time/dt_min)+1)):
+    for k in xrange(np.int(np.abs(int_time/dt_min))):
         # Condition that if k*dt = int_time the integration is complete
         if np.any(np.isclose(np.abs(int_time),np.abs(time-t_0))):
             break
@@ -162,18 +161,19 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 
         # If neither of above conditions met code will do the normal time-stepping method below
         else:
-            step = rkf45(positions, time, dt, derivs, adaptive_error_tol = adaptive_error_tol)
-            dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
+			step = rkf45(positions, time, dt, derivs, adaptive_error_tol = adaptive_error_tol)
+			dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
 			# Set dt = dt_min if dt too small
 			if dt < dt_min: # assuming scalar dt here
 				dt = dt_min
+
 			# Set = dt_max if dt too large
 			if dt > dt_max:
 				dt = dt_max
 
 			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
-            time += dt
-            #print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+			time += dt
+			#print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
     return positions
 
