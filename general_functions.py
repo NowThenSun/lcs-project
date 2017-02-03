@@ -95,7 +95,7 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	a4 = [1932/2197. , -7200/2197. , 7296/2197. ]
 	a5 = [439/216. , -8. , 3680/513. , -845/4104. ]
 	a6 = [-8/27. , 2. , -3544/2565. , 1859/4104. , -11/40. ]
-
+	
 	k1 = dt*np.array(derivs(y, time))
 	k2 = dt*np.array(derivs(y + a2*k1, time + np.sum(a2)*dt))
 	k3 = dt*np.array(derivs(y + a3[0]*k1 + a3[1]*k2, time + np.sum(a3)*dt))
@@ -161,19 +161,21 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 
         # If neither of above conditions met code will do the normal time-stepping method below
         else:
+			print time
 			step = rkf45(positions, time, dt, derivs, adaptive_error_tol = adaptive_error_tol)
+			print np.shape(step[0]),np.shape(step[1])
 			dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
 			# Set dt = dt_min if dt too small
-			if dt < dt_min: # assuming scalar dt here
+			if np.abs(dt) < np.abs(dt_min): # assuming scalar dt here
 				dt = dt_min
 
 			# Set = dt_max if dt too large
-			if dt > dt_max:
+			if np.abs(dt) > np.abs(dt_max):
 				dt = dt_max
 
 			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
 			time += dt
-			#print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
     return positions
 
