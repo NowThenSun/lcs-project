@@ -21,7 +21,7 @@ def regular_grid_interpolator_fn(U, V, X, Y, TIME):
         Function for interpolating velocity
         ~~~~~~~~~
         Inputs:
-        coords = coordinates to find the interpolated velocities at
+        coords = coordinates to find the interpolated velocities at 2*ny*nx*4
         current_time = time to find the interpolated velocity at (scalar)
         U, V = original velocity data that is used for the interpolation (len(TIME)*len(Y)*len(X) shaped arrays)
         X,Y,TIME = original 1D arrays of coordinates that velocity data is on
@@ -76,8 +76,8 @@ adap_error_tol = 20
 
 
 # Compute nx*ny grid of coordinates
-xx = np.linspace(X[0],X[-1], nx)
-yy = np.linspace(Y[0],Y[-1], ny)
+xx = np.linspace(X[0]+1/(2.*nx),X[-1]-1/(2.*nx), nx)
+yy = np.linspace(Y[0]+1/(2.*ny),Y[-1]-1/(2.*ny), ny)
 coord_grid = np.array(np.meshgrid(xx,yy,indexing='xy'))
 # Compute auxiliary grid for differentiation
 aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
