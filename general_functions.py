@@ -95,7 +95,7 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	a4 = [1932/2197. , -7200/2197. , 7296/2197. ]
 	a5 = [439/216. , -8. , 3680/513. , -845/4104. ]
 	a6 = [-8/27. , 2. , -3544/2565. , 1859/4104. , -11/40. ]
-	
+
 	k1 = dt*np.array(derivs(y, time))
 	k2 = dt*np.array(derivs(y + a2*k1, time + np.sum(a2)*dt))
 	k3 = dt*np.array(derivs(y + a3[0]*k1 + a3[1]*k2, time + np.sum(a3)*dt))
@@ -105,10 +105,10 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 
 	#4th order method
 	y_next = y + 25/216.*k1 + 1408/2565.*k3 + 2197/4101.*k4 - 1/5.*k5
-
+	#print "Y_NEXT IS:", y_next
 	#5th order method
 	z_next = y  + 16/135.*k1 + 6656/12825.*k3 + 28561/56430.*k4 - 9/50.*k5 + 2/55.*k6
-
+	#print "Z_NEXT IS:", z_next
 	#scaling factor s (for dt)
 	s = np.zeros(np.shape(y_next)[1:])
 	s = (adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
@@ -161,7 +161,6 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 
         # If neither of above conditions met code will do the normal time-stepping method below
         else:
-			print time
 			step = rkf45(positions, time, dt, derivs, adaptive_error_tol = adaptive_error_tol)
 			print np.shape(step[0]),np.shape(step[1])
 			dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
@@ -176,6 +175,7 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
 			time += dt
 			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+
 
     return positions
 
