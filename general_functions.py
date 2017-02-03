@@ -48,40 +48,40 @@ def rk4(y, time, dt, derivs):
 	return y_next
 
 def rk4_loop(derivs, aux_grid, t_0, int_time, dt):
-    '''
-    Function that performs the rk4 loop over an auxiliary grid.
-    ~~~~~~~~~
-    Inputs:
-    derivs = function that returns the derivatives of the positions (velocity)
-    aux_grid = 2*ny*nx(*4) initial grid of coordinatesd
-    t_0 = initial time before timestepping begins
-    int_time = time integrated over
-    dt = fixed timestep
-    ~~~~~~~~~
-    Outputs:
-    positions = final array of positions
-    '''
-    # Initialise positions array to aux. grid
-    positions = aux_grid
-    # Initialise time
-    time = t_0
-    for k in xrange(np.int(np.abs(int_time/dt))):
-        if np.abs(time - t_0<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
-            positions = rk4(positions, time, dt, derivs)
-            time += dt
-            print k, "current time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+	'''
+	Function that performs the rk4 loop over an auxiliary grid.
+	~~~~~~~~~
+	Inputs:
+	derivs = function that returns the derivatives of the positions (velocity)
+	aux_grid = 2*ny*nx(*4) initial grid of coordinatesd
+	t_0 = initial time before timestepping begins
+	int_time = time integrated over
+	dt = fixed timestep
+	~~~~~~~~~
+	Outputs:
+	positions = final array of positions
+	'''
+	# Initialise positions array to aux. grid
+	positions = aux_grid
+	# Initialise time
+	time = t_0
+	for k in xrange(np.int(np.abs(int_time/dt))):
+		if np.abs(time - t_0<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
+			positions = rk4(positions, time, dt, derivs)
+			time += dt
+			print k, "current time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
-    return positions
+	return positions
 
 # def rk4_loop_alt(derivs, aux_grid, t_0, int_time, dt, dt_i):
-    # '''
-    # Quick alternative RK4 test code (don't use for -ve integration times)
-    # '''
-    # positions = aux_grid
-    # for k in xrange(np.int(int_time/dt)+1):
-        # positions = rk4(positions, t_0 + k*dt, dt, derivs)
+	# '''
+	# Quick alternative RK4 test code (don't use for -ve integration times)
+	# '''
+	# positions = aux_grid
+	# for k in xrange(np.int(int_time/dt)+1):
+		# positions = rk4(positions, t_0 + k*dt, dt, derivs)
 
-    # return positions
+	# return positions
 
 def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	'''
@@ -110,57 +110,67 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	z_next = y  + 16/135.*k1 + 6656/12825.*k3 + 28561/56430.*k4 - 9/50.*k5 + 2/55.*k6
 	#print "Z_NEXT IS:", z_next
 	#scaling factor s (for dt)
-	s = np.zeros(np.shape(y_next)[1:])
-	s = (adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
+	#s = np.ones(np.shape(dt))
+	#If y_next = z_next (e.g. for dt = 0) replace s with s = 0
+	# condition = (y_next[0]==z_next[0])*(y_next[1]==z_next[1]) # Condition where both components of y_next and z_next are 0
+	# s = np.where(condition, 0., s)
+	# new_s = (adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
+	# s = np.where(s==1, new_s, s)
+
+	#Alternative strategy for s
+	s = np.zeros(np.shape(dt))
+	s =(adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
+	s = np.where(dt==0, 0., s)
+
 	#print np.abs(z_next-y_next)
-	#print "s values......", np.min(s),np.max(s), np.average(s)
+	#print "s values......", s
 
 	return y_next, s
 
 def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_max):
-    '''
-    Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with a fixed timestep for ALL points in the grid
-    ~~~~~~~~~
-    Inputs:
-    derivs = function that returns the derivatives of the positions (velocity)
-    aux_grid = 2*ny*nx(*4) initial grid of coordinates
-    adaptive_error_tol = error tolerance in rkf45 method
-    t_0 = initial time before timestepping begins
-    int_time = time integrated over
+	'''
+	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with a fixed timestep for ALL points in the grid
+	~~~~~~~~~
+	Inputs:
+	derivs = function that returns the derivatives of the positions (velocity)
+	aux_grid = 2*ny*nx(*4) initial grid of coordinates
+	adaptive_error_tol = error tolerance in rkf45 method
+	t_0 = initial time before timestepping begins
+	int_time = time integrated over
 	dt_min = impose minimum timestep allowed for adaptive method to choose
 	dt_max = impose maximum timestep allowed for adaptive method to choose
-    ~~~~~~~~~
-    Outputs:
-    positions = final array of positions
-    '''
-    # Initialise scalar of dt and times
-    time = t_0	# Doesn't have to be an array for time steps that don't vary spatially
-    print "timeshape", np.shape(time)
-    # set initial dt -- use a scalar dt for fixed step rkf45
-    dt = dt_min
+	~~~~~~~~~
+	Outputs:
+	positions = final array of positions
+	'''
+	# Initialise scalar of dt and times
+	time = t_0	# Doesn't have to be an array for time steps that don't vary spatially
+	print "timeshape", np.shape(time)
+	# set initial dt -- use a scalar dt for fixed step rkf45
+	dt = dt_min
 
-    # Set initial position to aux. grid
-    positions = np.zeros_like(aux_grid)
-    positions[:] = aux_grid[:]
+	# Set initial position to aux. grid
+	positions = np.zeros_like(aux_grid)
+	positions[:] = aux_grid[:]
 
-    for k in xrange(np.int(np.abs(int_time/dt_min))):
-        # Condition that if k*dt = int_time the integration is complete
-        if np.any(np.isclose(np.abs(int_time),np.abs(time-t_0))):
-            break
+	for k in xrange(np.int(np.abs(int_time/dt_min))):
+		# Condition that if k*dt = int_time the integration is complete
+		if np.any(np.isclose(np.abs(int_time),np.abs(time-t_0))):
+			break
 
-        # Condition that if integration time left is less than a full step of dt a new dt is defined so the integration ends exactly after stepping through int_time
-        elif np.any(np.abs(int_time)-np.abs(time-t_0)<np.abs(dt)):
-            dt_final = np.sign(dt)*(np.abs(int_time)-np.abs(time-t_0))
-            #print "final dt step:", dt_final
-            step = rkf45(positions, time, dt_final, derivs, adaptive_error_tol = adaptive_error_tol)
-            #dt = step[1]
-            positions = step[0]
-            time += dt_final
-            #print "final time (not to be evaluated at):", np.average(time)
-            break
+		# Condition that if integration time left is less than a full step of dt a new dt is defined so the integration ends exactly after stepping through int_time
+		elif np.any(np.abs(int_time)-np.abs(time-t_0)<np.abs(dt)):
+			dt_final = np.sign(dt)*(np.abs(int_time)-np.abs(time-t_0))
+			#print "final dt step:", dt_final
+			step = rkf45(positions, time, dt_final, derivs, adaptive_error_tol = adaptive_error_tol)
+			#dt = step[1]
+			positions = step[0]
+			time += dt_final
+			#print "final time (not to be evaluated at):", np.average(time)
+			break
 
-        # If neither of above conditions met code will do the normal time-stepping method below
-        else:
+		# If neither of above conditions met code will do the normal time-stepping method below
+		else:
 			step = rkf45(positions, time, dt, derivs, adaptive_error_tol = adaptive_error_tol)
 			print np.shape(step[0]),np.shape(step[1])
 			dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
@@ -177,11 +187,11 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
 
-    return positions
+	return positions
 
 
 
-def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i):
+def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_max):
 	'''
 	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with timesteps varying for different points in the grid.
 	~~~~~~~~~
@@ -191,13 +201,67 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_i):
 	adaptive_error_tol = error tolerance in rkf45 method
 	t_0 = initial time before timestepping begins
 	int_time = time integrated over
-	dt_i = initial timestep (chosen to be much lower than expected adaptive step size)
+	dt_min = impose minimum timestep allowed for adaptive method to choose
+	dt_max = impose maximum timestep allowed for adaptive method to choose
 	~~~~~~~~~
 	Outputs:
 	positions = final array of positions
 	'''
+	# Initialise scalar of dt and times
+	time = np.zeros((np.shape(aux_grid)[1],np.shape(aux_grid)[2],np.shape(aux_grid)[3]))	# ny*nx*4 array of times
+	print "timeshape", np.shape(time)
+	# set initial dt -- use an array of dt's the same size as the grid
+	dt = np.zeros_like(time) + dt_min
 
-	pass
+	# Set initial position to aux. grid
+	positions = np.zeros_like(aux_grid)
+	positions[:] = aux_grid[:]
+
+	# Create array for final positions
+	final_positions = np.zeros_like(aux_grid)
+
+	for k in xrange(np.int(np.abs(int_time/dt_min))):
+		# Condition that if for all grid points k*dt = int_time the integration is complete
+		if np.all(np.isclose(np.abs(int_time),np.abs(time-t_0))):
+			break
+
+		# Condition that if integration time left is less than a full step of dt a new dt is defined so the integration ends exactly after stepping through int_time
+		# elif np.any(np.abs(int_time)-np.abs(time-t_0)<np.abs(dt)):
+		# 	dt_final = np.sign(dt)*(np.abs(int_time)-np.abs(time-t_0))
+		# 	#print "final dt step:", dt_final
+		# 	step = rkf45(positions, time, dt_final, derivs, adaptive_error_tol = adaptive_error_tol)
+		#
+		# 	positions = step[0]
+		# 	time += dt_final
+		# 	#print "final time (not to be evaluated at):", np.average(time)
+		# 	break
+
+		# If neither of above conditions met code will do the normal time-stepping method below
+		else:
+			time_left = (int_time)-(time-t_0)
+			# Set dt values which are less than a full step away to the size left
+			dt = np.where(np.abs(dt)>np.abs(time_left), time_left, dt)
+			# Might have something to do with which point in the loop time is getting added to dt
+			print dt
+
+			# If time_left = 0, dt = 0
+			# dt not getting set to 0 somehow
+
+			step = rkf45(positions, time, dt, derivs, adaptive_error_tol)
+
+			dt *= step[1] # Update dt, positions (current position of particles), and time to be used in next step
+			# Set dt = dt_min if dt too small
+			# dt = np.where(np.abs(dt)<np.abs(dt_min), dt_min, dt)
+			# # Set = dt_max if dt too large
+			# dt = np.where(np.abs(dt)>np.abs(dt_max), dt_max, dt)
+
+			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
+			time += dt
+			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+
+
+	return positions
+
 
 
 

@@ -38,7 +38,7 @@ for j in xrange(len(res)):
     a_grid = fn.generate_auxiliary_grid(initial_grid, aux_grid_spacing=aux_grid_spacing)
     print np.shape(a_grid)
     # Use rkf45 integration scheme
-    final_pos = fn.rkf45_loop_fixed_step(derivs=dg.analytic_velocity, aux_grid=a_grid, adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_min=dt_min, dt_max = dt_max)
+    final_pos = fn.rkf45_loop(derivs=dg.analytic_velocity, aux_grid=a_grid, adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_min=dt_min, dt_max = dt_max)
     jac = fn.jacobian_matrix_aux(final_pos,aux_grid_spacing=aux_grid_spacing)
     cgst = fn.cauchy_green_tensor(jac)
     ev = np.linalg.eigvalsh(cgst)
