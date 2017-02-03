@@ -26,7 +26,7 @@ t_0 = 0.
 int_time = 10.
 dt_min = np.sign(int_time)*1*10**-4
 dt_max = 1.
-dt_fixed = 0.1      # timestep used for RK4 integration
+dt_fixed = 0.5      # timestep used for RK4 integration
 
 #list to put in final data of calculated FTLE fields
 FTLE_list = []

@@ -225,40 +225,30 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_m
 		if np.all(np.isclose(np.abs(int_time),np.abs(time-t_0))):
 			break
 
-		# Condition that if integration time left is less than a full step of dt a new dt is defined so the integration ends exactly after stepping through int_time
-		# elif np.any(np.abs(int_time)-np.abs(time-t_0)<np.abs(dt)):
-		# 	dt_final = np.sign(dt)*(np.abs(int_time)-np.abs(time-t_0))
-		# 	#print "final dt step:", dt_final
-		# 	step = rkf45(positions, time, dt_final, derivs, adaptive_error_tol = adaptive_error_tol)
-		#
-		# 	positions = step[0]
-		# 	time += dt_final
-		# 	#print "final time (not to be evaluated at):", np.average(time)
-		# 	break
-
-		# If neither of above conditions met code will do the normal time-stepping method below
+		# Perform rkf45 stepping until all grid points reach the total integration time
+		# Use various conditions to keep dt bounded and not overstep past the final integration time
 		else:
-			time_left = (int_time)-(time-t_0)
-			# Set dt values which are less than a full step away to the size left
-			dt = np.where(np.abs(dt)>np.abs(time_left), time_left, dt)
-			# Might have something to do with which point in the loop time is getting added to dt
-			print dt
-
-			# If time_left = 0, dt = 0
-			# dt not getting set to 0 somehow
-
+			#Perform step through dt first
 			step = rkf45(positions, time, dt, derivs, adaptive_error_tol)
-
-			dt *= step[1] # Update dt, positions (current position of particles), and time to be used in next step
-			# Set dt = dt_min if dt too small
-			# dt = np.where(np.abs(dt)<np.abs(dt_min), dt_min, dt)
-			# # Set = dt_max if dt too large
-			# dt = np.where(np.abs(dt)>np.abs(dt_max), dt_max, dt)
-
-			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
+			# Update time used for the NEXT step
 			time += dt
-			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+			positions = step[0] # Update position
 
+			# Work out different conditions to impose onto dt
+			time_left = (int_time)-(time-t_0)		
+			# Modify dt for each point in the grid by the recommended scalar s
+			dt *= step[1]
+			# Set dt = dt_min if dt too small
+			dt = np.where(np.abs(dt)<np.abs(dt_min), dt_min, dt)
+			# Set = dt_max if dt too large
+			dt = np.where(np.abs(dt)>np.abs(dt_max), dt_max, dt)
+			# Finally set dt values which are less than a full step away to the size left
+			dt = np.where(np.abs(dt)>np.abs(time_left), time_left, dt)
+			# Note order that these conditions are taken in is important
+			# If time_left = 0, dt = 0 which keeps the time fixed at the final time once it reaches it
+
+			#print time
+			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
 	return positions
 
