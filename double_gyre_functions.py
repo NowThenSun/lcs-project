@@ -5,7 +5,7 @@ from __future__ import division
 import numpy as np
 import general_functions as fn
 
-def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, adaptive_error_tol, dt_i, method ='rkf45_fixed'):
+def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, adaptive_error_tol, dt_min, dt_max, method ='rkf45'):
 	'''
 	Main function that puts together other functions to compute the FTLE field of the double gyre
 	~~~~~~~~~~
@@ -38,7 +38,8 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 
 	if method == 'rkf45_fixed':
 		# Perform rkf45 loop for fixed step on all grid points
-		final_pos = fn.rkf45_loop_fixed_step(derivs=analytic_velocity, aux_grid=a_grid, adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_i=dt_i)
+		final_pos = fn.rkf45_loop_fixed_step(derivs=analytic_velocity, aux_grid=a_grid,
+			adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max)
 		print "RKF45 fixed time step method used"
 
 	if method == 'rk4':
@@ -47,6 +48,8 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 		print "RK4 method used"
 
 	if method == 'rkf45':
+		final_pos = fn.rkf45_loop(derivs=analytic_velocity, aux_grid=a_grid,
+			adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max)
 
 		print "RKF45 full adaptive grid method used"
 	# Calculate jacobian matrix
@@ -80,7 +83,7 @@ def generate_grid(nx, ny):
 	Outputs:
 	coords = 2*ny*nx array of coordinates with [0] component returning the x-component and [1] returning the y-component
 	'''
-	
+
 	xlower = 0.
 	xupper = 2.
 	ylower = 0.
@@ -123,4 +126,55 @@ def analytic_velocity(coordinates, time_array):
 
 
 
-#main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10., nx=200, ny=100, aux_grid_spacing=1.*10**-5, t_0=0., int_time=10., adaptive_error_tol=1.*10**-4, dt_i=0.0001)
+# ftle = main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.,
+# 	nx=700, ny=350, aux_grid_spacing=1.*10**-5,
+# 	t_0=0., int_time=10., adaptive_error_tol=1.*10**-4,
+# 	dt_min=0.0001, dt_max=1.)
+# import matplotlib.pyplot as plt
+# import matplotlib as mpl
+# # Plotting code for plot of eigenvalues/FTLE field
+# fig = plt.figure()
+# ax = plt.axes()
+# #mpl.cm.register_cmap(name='mycubehelix',data=mpl._cm.cubehelix(g,s,r,sat)) ##way to add a colourmap directly (from segmentdata) into mpl.cm or something
+# #cmap = mpl.colors.LinearSegmentedColormap(name='abab', segmentdata =mpl._cm.cubehelix(g,s,r,sat))  ##way to create colormap from colour dictionary
+# def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
+#     '''
+#     ~~~~~~~~~~
+#     Inputs:
+#     g : gamma value (can increase intensity of high valued colors for g>1, increase intensity for low values for g<1)
+#     s : starting color
+#     r : number of rotations through B -> G -> R
+#     sat : saturation value (0 for grayscale)
+#     ~~~~~~~~~~~
+#     Outputs:
+#     cubehelix colourmap
+#     reverse cubehelix colourmap
+#     '''
+#     cdict = mpl._cm.cubehelix(g,s,r,sat)
+#     def rev_fn(f):
+#         def reverse_f(x):
+#             return f(1-x)
+#         return reverse_f
+#     b_r = rev_fn(cdict['blue'])
+#     g_r = rev_fn(cdict['green'])
+#     r_r = rev_fn(cdict['red'])
+#     cdict_r = {u'blue' : b_r, u'green' : g_r, u'red' : r_r}
+#     cmap = mpl.colors.LinearSegmentedColormap(name='ch', segmentdata=cdict)
+#     cmap_r = mpl.colors.LinearSegmentedColormap(name='ch_r', segmentdata=cdict_r)
+#     return cmap, cmap_r
+#
+#
+# im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(0,2,0,1),
+#     cmap=cubehelix_cmap(g=1.0,s=-1.2,r=-0.85,sat=1.0)[1]) #,aspect='auto' vmin=-0.0001,vmax=0.0001,
+# #
+# # ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
+# # ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
+# # #ax.text(0.3,1.02,'average dt = %.2e' %np.average(dt), transform=ax.transAxes)
+# # ax.text(0.6,-0.17,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
+# cbar_ax = fig.add_axes([0.855, 0.15, 0.025, 0.75])
+# #cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
+# #ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
+# ax.set_xlabel('x')
+# ax.set_ylabel('y')
+# cb = fig.colorbar(im, cax=cbar_ax)
+# plt.show()
