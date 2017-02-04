@@ -172,8 +172,13 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 		# If neither of above conditions met code will do the normal time-stepping method below
 		else:
 			step = rkf45(positions, time, dt, derivs, adaptive_error_tol = adaptive_error_tol)
-			print np.shape(step[0]),np.shape(step[1])
-			dt *= np.min(step[1]) # Update dt, positions (current position of particles), and time to be used in next step
+			#print np.shape(step[0]),np.shape(step[1])
+			# Update time to be used in the next step (the dt used in rkf45 has been used already for time)
+			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
+			time += dt
+
+			# Update dt
+			dt *= np.min(step[1])
 			# Set dt = dt_min if dt too small
 			if np.abs(dt) < np.abs(dt_min): # assuming scalar dt here
 				dt = dt_min
@@ -182,8 +187,7 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 			if np.abs(dt) > np.abs(dt_max):
 				dt = dt_max
 
-			positions = step[0] #positions = rk4(positions,time, dt,gyre_analytic)
-			time += dt
+			
 			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
 
@@ -235,7 +239,7 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_m
 			positions = step[0] # Update position
 
 			# Work out different conditions to impose onto dt
-			time_left = (int_time)-(time-t_0)		
+			time_left = (int_time)-(time-t_0)
 			# Modify dt for each point in the grid by the recommended scalar s
 			dt *= step[1]
 			# Set dt = dt_min if dt too small
