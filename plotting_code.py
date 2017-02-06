@@ -36,16 +36,20 @@ def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
     return cmap, cmap_r
 
 
-def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_tol):
+def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_tol, colour_range =(0,0)):
     '''
     Function that plots a colourmap of the FTLE field
     '''
     fig = plt.figure()
     ax = plt.axes()
-
-    im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
-        cmap=cubehelix_cmap(g=1.0,s=-1.2,r=-0.85,sat=1.0)[1],
-        vmin=-0.0001,vmax=0.0001) #,aspect='auto'
+    if colour_range == (0,0):
+        # Automatic colour bar range
+        im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
+            cmap=cubehelix_cmap(g=1.0,s=-1.2,r=-0.85,sat=1.0)[1])
+    else:
+        im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
+            cmap=cubehelix_cmap(g=1.0,s=-1.2,r=-0.85,sat=1.0)[1],
+            vmin=colour_range[0],vmax=colour_range[1]) #,aspect='auto'
 
     ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
     ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)

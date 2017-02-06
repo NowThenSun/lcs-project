@@ -138,4 +138,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adap_error_tol)
+plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adap_error_tol, colour_range=(-0.0001,0.0001))
