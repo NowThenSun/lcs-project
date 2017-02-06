@@ -118,7 +118,8 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	# s = np.where(s==1, new_s, s)
 
 	#Alternative strategy for s
-	s = np.zeros(np.shape(dt))
+	s = np.zeros_like(dt)
+
 	s =(adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
 	s = np.where(dt==0, 0., s)
 
@@ -187,7 +188,7 @@ def rkf45_loop_fixed_step(derivs, aux_grid, adaptive_error_tol, t_0, int_time, d
 			if np.abs(dt) > np.abs(dt_max):
 				dt = dt_max
 
-			
+
 			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
 
 
@@ -212,7 +213,7 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_m
 	positions = final array of positions
 	'''
 	# Initialise scalar of dt and times
-	time = np.zeros((np.shape(aux_grid)[1],np.shape(aux_grid)[2],np.shape(aux_grid)[3]))	# ny*nx*4 array of times
+	time = np.zeros((np.shape(aux_grid)[1],np.shape(aux_grid)[2],np.shape(aux_grid)[3]))+t_0	# ny*nx*4 array of times
 	print "timeshape", np.shape(time)
 	# set initial dt -- use an array of dt's the same size as the grid
 	dt = np.zeros_like(time) + dt_min
@@ -220,9 +221,6 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_m
 	# Set initial position to aux. grid
 	positions = np.zeros_like(aux_grid)
 	positions[:] = aux_grid[:]
-
-	# Create array for final positions
-	final_positions = np.zeros_like(aux_grid)
 
 	for k in xrange(np.int(np.abs(int_time/dt_min))):
 		# Condition that if for all grid points k*dt = int_time the integration is complete
@@ -251,8 +249,9 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_m
 			# Note order that these conditions are taken in is important
 			# If time_left = 0, dt = 0 which keeps the time fixed at the final time once it reaches it
 
-			#print time
+			print np.count_nonzero(time-t_0!=int_time)
 			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+
 
 	return positions
 

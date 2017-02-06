@@ -127,9 +127,9 @@ def analytic_velocity(coordinates, time_array):
 
 
 # ftle = main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.,
-# 	nx=700, ny=350, aux_grid_spacing=1.*10**-5,
-# 	t_0=0., int_time=10., adaptive_error_tol=1.*10**-4,
-# 	dt_min=0.0001, dt_max=1.)
+# 	nx=200, ny=100, aux_grid_spacing=1.*10**-5,
+# 	t_0=5., int_time=10., adaptive_error_tol=1.*10**-4,
+# 	dt_min=0.0001, dt_max=1., method = 'rkf45')
 # import matplotlib.pyplot as plt
 # import matplotlib as mpl
 # # Plotting code for plot of eigenvalues/FTLE field

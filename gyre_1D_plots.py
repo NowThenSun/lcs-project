@@ -22,7 +22,7 @@ dg_params = dg.gyre_global_params(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.)
 # other parameters
 aux_grid_spacing = 1*10**-5
 adaptive_error_tol = 1*10**-4
-t_0 = 0.
+t_0 = 2.
 int_time = 10.
 dt_min = np.sign(int_time)*1*10**-4
 dt_max = 1.
