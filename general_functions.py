@@ -97,6 +97,7 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	a6 = [-8/27. , 2. , -3544/2565. , 1859/4104. , -11/40. ]
 
 	k1 = dt*np.array(derivs(y, time))
+	#print np.shape(k1), np.shape(dt)
 	k2 = dt*np.array(derivs(y + a2*k1, time + np.sum(a2)*dt))
 	k3 = dt*np.array(derivs(y + a3[0]*k1 + a3[1]*k2, time + np.sum(a3)*dt))
 	k4 = dt*np.array(derivs(y + a4[0]*k1 + a4[1]*k2 + a4[2]*k3 ,time + np.sum(a4)*dt))
@@ -105,7 +106,7 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 
 	#4th order method
 	y_next = y + 25/216.*k1 + 1408/2565.*k3 + 2197/4101.*k4 - 1/5.*k5
-	#print "Y_NEXT IS:", y_next
+	#print "Y_NEXT IS:", y_next-y
 	#5th order method
 	z_next = y  + 16/135.*k1 + 6656/12825.*k3 + 28561/56430.*k4 - 9/50.*k5 + 2/55.*k6
 	#print "Z_NEXT IS:", z_next
@@ -116,11 +117,13 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	# s = np.where(condition, 0., s)
 	# new_s = (adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
 	# s = np.where(s==1, new_s, s)
-
+	#print y_next - z_next
 	#Alternative strategy for s
 	s = np.zeros_like(dt)
 
-	s =(adaptive_error_tol/(2.*np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2)))**0.25
+	s =(adaptive_error_tol/(2.*np.sqrt(
+	(z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2
+	)))**0.25
 	s = np.where(dt==0, 0., s)
 
 	#print np.abs(z_next-y_next)
@@ -212,6 +215,7 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_m
 	Outputs:
 	positions = final array of positions
 	'''
+	print "RKF45 LOOP INITIATED"
 	# Initialise scalar of dt and times
 	time = np.zeros((np.shape(aux_grid)[1],np.shape(aux_grid)[2],np.shape(aux_grid)[3]))+t_0	# ny*nx*4 array of times
 	print "timeshape", np.shape(time)
@@ -251,8 +255,8 @@ def rkf45_loop(derivs, aux_grid, adaptive_error_tol, t_0, int_time, dt_min, dt_m
 
 			print np.count_nonzero(time-t_0!=int_time)
 			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
-
-
+			#break
+			#print positions-aux_grid
 	return positions
 
 

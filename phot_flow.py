@@ -6,10 +6,7 @@ import numpy as np
 import general_functions as fn
 from scipy.io import netcdf
 from scipy.interpolate import RegularGridInterpolator
-import matplotlib.pyplot as plt
-#import matplotlib.animation as anim
-import matplotlib as mpl
-
+import plotting_code as plot
 
 
 def regular_grid_interpolator_fn(U, V, X, Y, TIME):
@@ -67,14 +64,14 @@ def regular_grid_interpolator_fn(U, V, X, Y, TIME):
         Outputs:
         Interpolated velocity at coordinates and current_time inputted
         '''
-        print np.shape(coords)
+        #print np.shape(coords)
         #t_repeat = np.repeat(current_time, 4, axis=-1) #grid repeated to 1*ny*nx*4 shape for broadcasting
-        #t_repeat = np.zeros((1,np.shape(coords)[1],np.shape(coords)[2],4))+current_time
+        t_repeat = np.zeros((1,np.shape(coords)[1],np.shape(coords)[2],4))+current_time
         #print t_repeat
         #print np.shape(current_time), np.shape(t_repeat)
-        #mesh_coords = np.concatenate((t_repeat,coords)) # 3*ny*nx*n4 shape now (T,X,Y) indexing  (but X = Y here - so doesn't matter)
-        join = np.concatenate((current_time[np.newaxis],coords))
-        mesh_coords1 = join[::-1] # Flips to (Y,X,T) indexing
+        mesh_coords = np.concatenate((t_repeat,coords)) # 3*ny*nx*n4 shape now (T,X,Y) indexing  (but X = Y here - so doesn't matter)
+        #join = np.concatenate((current_time[np.newaxis],coords))
+        mesh_coords1 = mesh_coords[::-1] # Flips to (Y,X,T) indexing
         mesh_coords2 = np.roll(mesh_coords1, 1, axis=0) #Rolls to (T,Y,X) indexing (moves the final axes to position before 1)
         #Need to meshgrid coordinates into a N*3 form to input into regulargridinterpolator
         mc3 = np.swapaxes(mesh_coords2 , 0, -1)  #4*ny*nx*3
@@ -88,7 +85,7 @@ def regular_grid_interpolator_fn(U, V, X, Y, TIME):
         Vint = RegularGridInterpolator((TIME,Y,X),V,bounds_error=bound_interpolation,fill_value=None)  #fill_value = None extrapolates
         U1 = Uint(mc4).reshape(4,np.shape(coords)[1],np.shape(coords)[2])  #insert N*3 return N shaped arrays
         V1 = Vint(mc4).reshape(4,np.shape(coords)[1],np.shape(coords)[2])
-        print np.shape(U1), np.shape(np.rollaxis(U1,0,3))
+
         return np.rollaxis(U1,0,3),np.rollaxis(V1,0,3)
 
 
@@ -115,9 +112,9 @@ ny = 40
 t_0 = TIME[0]                  # Initial time
 aux_grid_spacing = 1
 int_time  = 14400 # in seconds (21600s = 6 hrs)
-dt_min = np.sign(int_time)*200
-dt_max = np.sign(int_time)*3000
-adap_error_tol = 20
+dt_min = np.sign(int_time)*10
+dt_max = np.sign(int_time)*1500
+adap_error_tol = 2000
 
 
 # Compute nx*ny grid of coordinates
@@ -141,48 +138,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-fig = plt.figure()
-ax = plt.axes()
-#mpl.cm.register_cmap(name='mycubehelix',data=mpl._cm.cubehelix(g,s,r,sat)) ##way to add a colourmap directly (from segmentdata) into mpl.cm or something
-#cmap = mpl.colors.LinearSegmentedColormap(name='abab', segmentdata =mpl._cm.cubehelix(g,s,r,sat))  ##way to create colormap from colour dictionary
-def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
-    '''
-    ~~~~~~~~~~
-    Inputs:
-    g : gamma value (can increase intensity of high valued colors for g>1, increase intensity for low values for g<1)
-    s : starting color
-    r : number of rotations through B -> G -> R
-    sat : saturation value (0 for grayscale)
-    ~~~~~~~~~~~
-    Outputs:
-    cubehelix colourmap
-    reverse cubehelix colourmap
-    '''
-    cdict = mpl._cm.cubehelix(g,s,r,sat)
-    def rev_fn(f):
-        def reverse_f(x):
-            return f(1-x)
-        return reverse_f
-    b_r = rev_fn(cdict['blue'])
-    g_r = rev_fn(cdict['green'])
-    r_r = rev_fn(cdict['red'])
-    cdict_r = {u'blue' : b_r, u'green' : g_r, u'red' : r_r}
-    cmap = mpl.colors.LinearSegmentedColormap(name='ch', segmentdata=cdict)
-    cmap_r = mpl.colors.LinearSegmentedColormap(name='ch_r', segmentdata=cdict_r)
-    return cmap, cmap_r
-
-
-im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(X[0],X[-1],Y[0],Y[-1]),
-    cmap=cubehelix_cmap(g=1.0,s=-1.2,r=-0.85,sat=1.0)[1]) #,aspect='auto' vmin=-0.0001,vmax=0.0001,
-
-ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
-ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
-#ax.text(0.3,1.02,'average dt = %.2e' %np.average(dt), transform=ax.transAxes)
-ax.text(0.6,-0.17,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
-cbar_ax = fig.add_axes([0.855, 0.15, 0.025, 0.75])
-#cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
-#ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
-ax.set_xlabel('x')
-ax.set_ylabel('y')
-cb = fig.colorbar(im, cax=cbar_ax)
-plt.show()
+plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adap_error_tol)

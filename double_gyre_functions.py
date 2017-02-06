@@ -125,7 +125,7 @@ def analytic_velocity(coordinates, time_array):
 	return u, v  #Note this returns (u,v) as a tuple
 
 
-
+#
 # ftle = main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.,
 # 	nx=200, ny=100, aux_grid_spacing=1.*10**-5,
 # 	t_0=5., int_time=10., adaptive_error_tol=1.*10**-4,
@@ -171,7 +171,7 @@ def analytic_velocity(coordinates, time_array):
 # # ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
 # # #ax.text(0.3,1.02,'average dt = %.2e' %np.average(dt), transform=ax.transAxes)
 # # ax.text(0.6,-0.17,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
-# cbar_ax = fig.add_axes([0.855, 0.15, 0.025, 0.75])
+# cbar_ax = fig.add_axes([0.910, 0.15, 0.025, 0.75])
 # #cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
 # #ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
 # ax.set_xlabel('x')
