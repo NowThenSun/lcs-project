@@ -93,7 +93,7 @@ def regular_grid_interpolator_fn(U, V, X, Y, TIME):
 
 
 
-hyd = netcdf.netcdf_file('data/hydro10x10Re470.nc', 'r', mmap=False)
+hyd = netcdf.netcdf_file('data/dynamo10x10Re470.nc', 'r', mmap=False)
 print hyd.variables.keys()
 U_hyd = hyd.variables['U'][:]  #T x Y x X sized array (assume its Y x X order)
 V_hyd = hyd.variables['V'][:]   # 76*512*512 here
