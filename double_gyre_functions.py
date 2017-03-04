@@ -126,55 +126,62 @@ def analytic_velocity(coordinates, time_array):
 
 
 #
-# ftle = main(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.,
-# 	nx=200, ny=100, aux_grid_spacing=1.*10**-5,
-# 	t_0=5., int_time=10., adaptive_error_tol=1.*10**-4,
-# 	dt_min=0.0001, dt_max=1., method = 'rkf45')
-# import matplotlib.pyplot as plt
-# import matplotlib as mpl
-# # Plotting code for plot of eigenvalues/FTLE field
-# fig = plt.figure()
-# ax = plt.axes()
-# #mpl.cm.register_cmap(name='mycubehelix',data=mpl._cm.cubehelix(g,s,r,sat)) ##way to add a colourmap directly (from segmentdata) into mpl.cm or something
-# #cmap = mpl.colors.LinearSegmentedColormap(name='abab', segmentdata =mpl._cm.cubehelix(g,s,r,sat))  ##way to create colormap from colour dictionary
-# def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
-#     '''
-#     ~~~~~~~~~~
-#     Inputs:
-#     g : gamma value (can increase intensity of high valued colors for g>1, increase intensity for low values for g<1)
-#     s : starting color
-#     r : number of rotations through B -> G -> R
-#     sat : saturation value (0 for grayscale)
-#     ~~~~~~~~~~~
-#     Outputs:
-#     cubehelix colourmap
-#     reverse cubehelix colourmap
-#     '''
-#     cdict = mpl._cm.cubehelix(g,s,r,sat)
-#     def rev_fn(f):
-#         def reverse_f(x):
-#             return f(1-x)
-#         return reverse_f
-#     b_r = rev_fn(cdict['blue'])
-#     g_r = rev_fn(cdict['green'])
-#     r_r = rev_fn(cdict['red'])
-#     cdict_r = {u'blue' : b_r, u'green' : g_r, u'red' : r_r}
-#     cmap = mpl.colors.LinearSegmentedColormap(name='ch', segmentdata=cdict)
-#     cmap_r = mpl.colors.LinearSegmentedColormap(name='ch_r', segmentdata=cdict_r)
-#     return cmap, cmap_r
+ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
+	nx=1000, ny=500, aux_grid_spacing=1.*10**-5,
+	t_0=5., int_time=15., adaptive_error_tol=1.*10**-4,
+	dt_min=0.0001, dt_max=1., method = 'rkf45')
+
+
+import matplotlib.pyplot as plt
+import matplotlib as mpl
+# Plotting code for plot of eigenvalues/FTLE field
+fig = plt.figure()
+ax = plt.axes()
+#mpl.cm.register_cmap(name='mycubehelix',data=mpl._cm.cubehelix(g,s,r,sat)) ##way to add a colourmap directly (from segmentdata) into mpl.cm or something
+#cmap = mpl.colors.LinearSegmentedColormap(name='abab', segmentdata =mpl._cm.cubehelix(g,s,r,sat))  ##way to create colormap from colour dictionary
+def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
+    '''
+    ~~~~~~~~~~
+    Inputs:
+    g : gamma value (can increase intensity of high valued colors for g>1, increase intensity for low values for g<1)
+    s : starting color
+    r : number of rotations through B -> G -> R
+    sat : saturation value (0 for grayscale)
+    ~~~~~~~~~~~
+    Outputs:
+    cubehelix colourmap
+    reverse cubehelix colourmap
+    '''
+    cdict = mpl._cm.cubehelix(g,s,r,sat)
+    def rev_fn(f):
+        def reverse_f(x):
+            return f(1-x)
+        return reverse_f
+    b_r = rev_fn(cdict['blue'])
+    g_r = rev_fn(cdict['green'])
+    r_r = rev_fn(cdict['red'])
+    cdict_r = {u'blue' : b_r, u'green' : g_r, u'red' : r_r}
+    cmap = mpl.colors.LinearSegmentedColormap(name='ch', segmentdata=cdict)
+    cmap_r = mpl.colors.LinearSegmentedColormap(name='ch_r', segmentdata=cdict_r)
+    return cmap, cmap_r
+
+
+im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(0,2,0,1),
+    cmap=cubehelix_cmap(g=2.0,s=-1.2,r=-0.85,sat=1.0)[1],vmax=0.51) #,aspect='auto' vmin=-0.0001,vmax=0.0001,
 #
-#
-# im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(0,2,0,1),
-#     cmap=cubehelix_cmap(g=1.0,s=-1.2,r=-0.85,sat=1.0)[1]) #,aspect='auto' vmin=-0.0001,vmax=0.0001,
-# #
-# # ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
-# # ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
-# # #ax.text(0.3,1.02,'average dt = %.2e' %np.average(dt), transform=ax.transAxes)
-# # ax.text(0.6,-0.17,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
-# cbar_ax = fig.add_axes([0.910, 0.15, 0.025, 0.75])
-# #cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
-# #ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
-# ax.set_xlabel('x')
-# ax.set_ylabel('y')
-# cb = fig.colorbar(im, cax=cbar_ax)
-# plt.show()
+# ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
+# ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
+# #ax.text(0.3,1.02,'average dt = %.2e' %np.average(dt), transform=ax.transAxes)
+# ax.text(0.6,-0.17,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
+cbar_ax = fig.add_axes([0.900, 0.23, 0.025, 0.54])
+pos1 = ax.get_position() # get the original position
+pos2 = [pos1.x0 - 0.04, pos1.y0 ,  pos1.width , pos1.height ]
+ax.set_position(pos2) # set a new position
+print pos1
+#cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
+#ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+cb = fig.colorbar(im, cax=cbar_ax, ticks=np.arange(8.)/10.)
+plt.savefig('DG_FTLE_-1A_-15e_15T_5t0_1000x500_v4.pdf',transparent=True,bbox_inches='tight')
+plt.show()

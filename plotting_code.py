@@ -36,7 +36,7 @@ def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
     return cmap, cmap_r
 
 
-def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_tol, colour_range =(0,0)):
+def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_tol, colour_range =(0,0), save_name=False):
     '''
     Function that plots a colourmap of the FTLE field
     '''
@@ -61,4 +61,7 @@ def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_to
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     cb = fig.colorbar(im, cax=cbar_ax)
-    plt.show()
+    if save_name == False:
+        plt.show()
+    else:
+        print "ohio"
