@@ -25,6 +25,8 @@ $RECYCLE.BIN/
 old_code/
 # Python leftover files
 *.pyc
+# Plots
+*.pdf
 
 # =========================
 # Operating System Files
