@@ -47,7 +47,7 @@ def rk4(y, time, dt, derivs):
 	y_next = y + (k0+2.*k1+2.*k2+k3)/6.
 	return y_next
 
-def rk4_loop(derivs, aux_grid, t_0, int_time, dt):
+def rk4_loop(derivs, aux_grid, t_0, int_time, dt,return_data=False):
 	'''
 	Function that performs the rk4 loop over an auxiliary grid.
 	~~~~~~~~~
@@ -65,11 +65,25 @@ def rk4_loop(derivs, aux_grid, t_0, int_time, dt):
 	positions = aux_grid
 	# Initialise time
 	time = t_0
+
+	if return_data==True:
+		np.append(np.shape(positions),np.int(np.abs(int_time/dt)))
+		full_positions = np.zeros((np.append(np.shape(positions),np.int(np.abs(int_time/dt)))))
+		for k in xrange(np.int(np.abs(int_time/dt))):
+			if np.abs(time - t_0<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
+				positions = rk4(positions, time, dt, derivs)
+				time += dt
+				full_positions[...,k] = positions
+				print k, "current time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+
+		return positions, full_positions
+
 	for k in xrange(np.int(np.abs(int_time/dt))):
 		if np.abs(time - t_0<np.abs(int_time)):   # want to generalise so negative dt works too - hence the use of mod(k*dt) < mod(intT)
 			positions = rk4(positions, time, dt, derivs)
 			time += dt
 			print k, "current time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+
 
 	return positions
 
