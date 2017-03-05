@@ -107,14 +107,14 @@ TIME = fh.variables['TIME'][:]
 fh.close()
 
 #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-nx = 40
-ny = 40
+nx = 100
+ny = 100
 t_0 = TIME[0]                  # Initial time
-aux_grid_spacing = 1
+aux_grid_spacing = 10
 int_time  = 14400 # in seconds (21600s = 6 hrs)
-dt_min = np.sign(int_time)*10
-dt_max = np.sign(int_time)*1500
-adap_error_tol = 2000
+dt_min = np.sign(int_time)*500
+dt_max = np.sign(int_time)*501
+adap_error_tol = 0.001
 
 
 # Compute nx*ny grid of coordinates
@@ -123,12 +123,13 @@ yy = np.linspace(Y[0]+1/(2.*ny),Y[-1]-1/(2.*ny), ny)
 coord_grid = np.array(np.meshgrid(xx,yy,indexing='xy'))
 # Compute auxiliary grid for differentiation
 aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
-
+print np.diff(xx)
 # Perform RKF45 scheme on aux_grid
 final_positions = fn.rkf45_loop(
     derivs=regular_grid_interpolator_fn(U, V, X, Y, TIME)[1], aux_grid=aux_grid,
     adaptive_error_tol=adap_error_tol, t_0=t_0,
     int_time=int_time, dt_min=dt_min, dt_max = dt_max)
+
 
 jac = fn.jacobian_matrix_aux(final_positions,aux_grid_spacing=aux_grid_spacing)
 cgst = fn.cauchy_green_tensor(jac)

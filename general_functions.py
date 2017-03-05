@@ -121,7 +121,7 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	#Alternative strategy for s
 	s = np.zeros_like(dt)
 
-	s =(adaptive_error_tol/(2.*np.sqrt(
+	s =(adaptive_error_tol*dt/(2.*np.sqrt(
 	(z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2
 	)))**0.25
 	s = np.where(dt==0, 0., s)
@@ -302,7 +302,7 @@ def cauchy_green_tensor(jac):
 	# Input values using symmetry of Cauchy-Green tensor
 	cgt[...,0,0] = jac[...,0,0]**2 + jac[...,1,0]**2
 	cgt[...,1,0] = jac[...,0,0]*jac[...,0,1] + jac[...,1,0]*jac[...,1,1]
-	cgt[...,0,1] = jac[...,0,0]*jac[...,0,1] + jac[...,1,0]*jac[...,1,1]
+	cgt[...,0,	1] = jac[...,0,0]*jac[...,0,1] + jac[...,1,0]*jac[...,1,1]
 	cgt[...,1,1] = jac[...,0,1]**2 + jac[...,1,1]**2
 
 	return cgt
