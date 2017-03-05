@@ -71,4 +71,5 @@ for j in xrange(len(res)):
     plt.plot(np.linspace(x0,x1,res[j]),FTLE_list[2*j+1][0], '-')
     legends.append('RK4 %ix%i dt = %.2f' %(actual_res[j],actual_res[j]/2, dt_fixed))
 plt.legend(legends)
+#plt.savefig('testfig23.pdf',transparent=True)
 plt.show()
