@@ -38,7 +38,7 @@ def ex2(coordinates,time_array):
 def plot_fluid_parcel(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yupper = 2,
     velocity_example = ex2,
     density_blob=100,diam_blob = 1.5 , corner_pos_blob=  (-3, -1.5/2),
-    blob_timestep1 = 0, blob_timestep2 = 0, blob_timestep3 = 20,
+    blob_timestep1 = -1, blob_timestep2 = -1, blob_timestep3 = 20,
     t_0=0, int_time=2.4, dt=0.06
     ):
     '''
@@ -100,11 +100,11 @@ def plot_fluid_parcel(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yup
     plt.show()
 
 
-#plot_fluid_parcel()  # Default parameters for example2
+plot_fluid_parcel(diam_blob=1.2, corner_pos_blob=(-2,-0.6))  # Default parameters for example2
 
 plot_fluid_parcel(nx = 20, ny = 20, xlower = -1.3, xupper = 1.3,ylower = -1.3, yupper = 1.3,
     velocity_example = ex1,
     density_blob=200,diam_blob = 0.2 , corner_pos_blob=  (-0.1, 0.85),
     blob_timestep1 = 5, blob_timestep2 = 10, blob_timestep3 = -1,
     t_0=0, int_time=2.4, dt=0.06
-    )
+    )  # parameters for example1

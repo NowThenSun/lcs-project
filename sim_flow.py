@@ -112,7 +112,7 @@ hyd.close()
 nx = 100
 ny = 100
 t_0 = TIME_hyd[0]                  # Initial time
-aux_grid_spacing = 10**-3
+aux_grid_spacing = 0.1
 int_time  = 40 #hydro data goes ~211-264
 dt_min = np.sign(int_time)*0.01
 dt_max = np.sign(int_time)*5
@@ -123,6 +123,7 @@ X = np.linspace(0.,10.,512)
 Y = np.linspace(0.,10.,512)
 xx = np.linspace(X[0]+1/(2.*nx),X[-1]-1/(2.*nx), nx)
 yy = np.linspace(Y[0]+1/(2.*ny),Y[-1]-1/(2.*ny), ny)
+
 coord_grid = np.array(np.meshgrid(xx,yy,indexing='xy'))
 # Compute auxiliary grid for differentiation
 aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
@@ -132,10 +133,10 @@ aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 #     derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
 #     adaptive_error_tol=adap_error_tol, t_0=t_0,
 #     int_time=int_time, dt_min=dt_min, dt_max = dt_max)
-final_positions = fn.rk4_loop(
+final_positions,all_pos = fn.rk4_loop(
     derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
     t_0=t_0,
-    int_time=int_time, dt = 1)
+    int_time=int_time, dt = 1,return_data=True)
 jac = fn.jacobian_matrix_aux(final_positions,aux_grid_spacing=aux_grid_spacing)
 cgst = fn.cauchy_green_tensor(jac)
 ev = np.linalg.eigvalsh(cgst)
