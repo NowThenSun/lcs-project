@@ -135,9 +135,9 @@ def rkf45(y, time, dt, derivs, adaptive_error_tol):
 	#Alternative strategy for s
 	s = np.zeros_like(dt)
 
-	s =(adaptive_error_tol*dt/(2.*np.sqrt(
-	(z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2
-	)))**0.25
+	s =(adaptive_error_tol*dt/(2.*
+	np.sqrt((z_next[0]-y_next[0])**2+(z_next[1]-y_next[1])**2))
+	)**0.25
 	s = np.where(dt==0, 0., s)
 
 	#print np.abs(z_next-y_next)

@@ -127,8 +127,8 @@ def analytic_velocity(coordinates, time_array):
 
 #
 ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
-	nx=1000, ny=500, aux_grid_spacing=1.*10**-5,
-	t_0=5., int_time=15., adaptive_error_tol=1.*10**-4,
+	nx=100, ny=50, aux_grid_spacing=1.*10**-5,
+	t_0=5., int_time=15., adaptive_error_tol=1.*10**-2,
 	dt_min=0.0001, dt_max=1., method = 'rkf45')
 
 
@@ -150,7 +150,7 @@ def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
     ~~~~~~~~~~~
     Outputs:
     cubehelix colourmap
-    reverse cubehelix colourmap
+    reverse cubehelix colourma	p
     '''
     cdict = mpl._cm.cubehelix(g,s,r,sat)
     def rev_fn(f):
@@ -183,5 +183,5 @@ print pos1
 ax.set_xlabel('x')
 ax.set_ylabel('y')
 cb = fig.colorbar(im, cax=cbar_ax, ticks=np.arange(8.)/10.)
-plt.savefig('DG_FTLE_-1A_-15e_15T_5t0_1000x500_v4.pdf',transparent=True,bbox_inches='tight')
+# plt.savefig('DG_FTLE_-1A_-15e_15T_5t0_1000x500_v4.pdf',transparent=True,bbox_inches='tight')
 plt.show()
