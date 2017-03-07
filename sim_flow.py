@@ -93,7 +93,7 @@ def regular_grid_interpolator_fn(U, V, X, Y, TIME):
 
 
 
-hyd = netcdf.netcdf_file('data/dynamo10x10Re470.nc', 'r', mmap=False)
+hyd = netcdf.netcdf_file('data/hydro10x10Re470.nc', 'r', mmap=False)
 print hyd.variables.keys()
 U_hyd = hyd.variables['U'][:]  #T x Y x X sized array (assume its Y x X order)
 V_hyd = hyd.variables['V'][:]   # 76*512*512 here
@@ -113,7 +113,7 @@ nx = 100
 ny = 100
 t_0 = TIME_hyd[0]                  # Initial time
 aux_grid_spacing = 0.1
-int_time  = 40 #hydro data goes ~211-264
+int_time  = 5#hydro data goes ~211-264
 dt_min = np.sign(int_time)*0.01
 dt_max = np.sign(int_time)*5
 adap_error_tol = 4
@@ -136,7 +136,7 @@ aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 final_positions,all_pos = fn.rk4_loop(
     derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
     t_0=t_0,
-    int_time=int_time, dt = 1,return_data=True)
+    int_time=int_time, dt = 0.02,return_data=True)
 jac = fn.jacobian_matrix_aux(final_positions,aux_grid_spacing=aux_grid_spacing)
 cgst = fn.cauchy_green_tensor(jac)
 ev = np.linalg.eigvalsh(cgst)
@@ -145,4 +145,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adap_error_tol)#, colour_range=(0,0.8))
+plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adap_error_tol)#, colour_range=(0,0.1))
