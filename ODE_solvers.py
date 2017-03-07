@@ -57,8 +57,7 @@ def rkf45(y, time, dt, derivs, atol, rtol):
 	# Calculate scaling factor s for the stepsize
 	s = np.zeros_like(dt)
 	#s =(adaptive_error_tol*dt/(2.*delta))**0.25
-	s = 0.84*(scale/delta)**0.2
-	s = np.where(dt==0, 0., s)
+	s = np.where(dt==0, 0., 0.84*(scale/delta)**0.2)
 
 
 	return y_next, s, delta
@@ -76,7 +75,7 @@ def rkf45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, 
 	Parameters:				Inputs:
 	derivs 					function that returns the derivatives of the positions (velocity)
 	aux_grid  				2*ny*nx(*4) initial grid of coordinates (y(t0) = y0 = aux_grid)
-	t_0 						initial time
+	t_0 					initial time
 	int_time 				time integrated over
 	dt_min 					impose minimum timestep allowed for adaptive method to choose
 	dt_max 					impose maximum timestep allowed for adaptive method to choose

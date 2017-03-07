@@ -8,7 +8,7 @@ from scipy.io import netcdf
 from scipy.interpolate import RegularGridInterpolator
 import plotting_code as plot
 import ODE_solvers as ODE
-
+import time
 
 def regular_grid_interpolator_fn(U, V, X, Y, TIME):
     '''
@@ -114,7 +114,7 @@ t_0 = TIME[0]                  # Initial time
 aux_grid_spacing = 10
 int_time  = 14400 # in seconds (21600s = 6 hrs)
 dt_min = np.sign(int_time)*10
-dt_max = np.sign(int_time)*500
+dt_max = np.sign(int_time)*250
 #adap_error_tol = 0.001
 
 
@@ -125,11 +125,13 @@ coord_grid = np.array(np.meshgrid(xx,yy,indexing='xy'))
 # Compute auxiliary grid for differentiation
 aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 # Perform RKF45 scheme on aux_grid
+t_beforeloop = time.time()
 final_positions = ODE.rkf45_loop(
     derivs=regular_grid_interpolator_fn(U, V, X, Y, TIME)[1], aux_grid=aux_grid,
     t_0=t_0,
-    int_time=int_time, dt_min=dt_min, dt_max = dt_max,maxiters = 1000, atol=0.00001, rtol =0.00001)
-
+    int_time=int_time, dt_min=dt_min, dt_max = dt_max,maxiters = 1000, atol=0.0001, rtol =0.0001)#00001)
+t_afterloop = time.time()
+print "Time taken to integrate ODE:", t_afterloop - t_beforeloop
 
 jac = fn.jacobian_matrix_aux(final_positions,aux_grid_spacing=aux_grid_spacing)
 cgst = fn.cauchy_green_tensor(jac)
