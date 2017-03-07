@@ -4,6 +4,7 @@ Module that includes double gyre specific functions for FTLE computation.
 from __future__ import division
 import numpy as np
 import general_functions as fn
+import ODE_solvers as ODE
 
 def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, adaptive_error_tol, dt_min, dt_max, method ='rkf45'):
 	'''
@@ -52,6 +53,11 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 			adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max)
 
 		print "RKF45 full adaptive grid method used"
+
+	if method == 'rkf45error':
+		final_pos = ODE.rkf45_loop(derivs=analytic_velocity, aux_grid=a_grid,
+			t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max,
+			maxiters = 1000, atol = adaptive_error_tol, rtol = adaptive_error_tol)
 	# Calculate jacobian matrix
 	jac = fn.jacobian_matrix_aux(final_pos,aux_grid_spacing=aux_grid_spacing)
 	cgst = fn.cauchy_green_tensor(jac)
@@ -127,9 +133,9 @@ def analytic_velocity(coordinates, time_array):
 
 #
 ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
-	nx=100, ny=50, aux_grid_spacing=1.*10**-5,
-	t_0=5., int_time=15., adaptive_error_tol=1.*10**-2,
-	dt_min=0.0001, dt_max=1., method = 'rkf45')
+	nx=500, ny=250, aux_grid_spacing=1.*10**-5,
+	t_0=5., int_time=15., adaptive_error_tol=1.*10**-4,
+	dt_min=0.01, dt_max=0.8, method = 'rkf45error')
 
 
 import matplotlib.pyplot as plt
@@ -177,7 +183,7 @@ cbar_ax = fig.add_axes([0.900, 0.23, 0.025, 0.54])
 pos1 = ax.get_position() # get the original position
 pos2 = [pos1.x0 - 0.04, pos1.y0 ,  pos1.width , pos1.height ]
 ax.set_position(pos2) # set a new position
-print pos1
+#print pos1
 #cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
 #ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
 ax.set_xlabel('x')
