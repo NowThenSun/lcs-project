@@ -112,17 +112,13 @@ hyd.close()
 # print U_hyd
 # print TIME_hyd[-1], TIME_hyd[0]
 #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-nx = 30
-ny = 30
+nx = 300
+ny = 300
 t_0 = TIME_hyd[10]                  # Initial time
 int_time  = 5#hydro data goes ~211-264
 dt_min = np.sign(int_time)*0.01
-dt_max = np.sign(int_time)*0.2
-<<<<<<< Updated upstream
-adaptive_error_tol = 10**-5
-=======
+dt_max = np.sign(int_time)*0.1
 adaptive_error_tol = 10**-2
->>>>>>> Stashed changes
 
 # Compute nx*ny grid of coordinates
 X = np.linspace(0.,10.,512)

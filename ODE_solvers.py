@@ -40,15 +40,15 @@ def dp45(y, time, dt, derivs, atol, rtol):
 	# 4th order estimate for y_next
 	Y_next = y + b1*k1 + b2*k2 + b3*k3 + b4*k4 + b5*k5 + b6*k6 + b7*k7
 	y_next = y + B1*k1 + B2*k2 + B3*k3 + B4*k4 + B5*k5 + B6*k6 + B7*k7
-	
+
 	delta = y_next - Y_next
 	scale = atol + np.maximum(np.abs(y),np.abs(y_next))*rtol
-	err = np.sqrt(0.5*((delta/scale)[0]**2+(delta/scale)[1]**2))
+	err = np.sqrt(0.5*((delta[0]/scale[0])**2+(delta[1]/scale[1])**2))
 	print "shape of error:", np.shape(err)
 	#s =(atol*dt/(2.*delta))**0.25
 	safety_factor = 0.97
 	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)
-
+	#s = np.where(dt==0, 0., safety_factor*dt*(1./err)**0.25)
 	return y_next, s, err
 
 
