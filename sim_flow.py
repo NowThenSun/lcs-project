@@ -9,6 +9,7 @@ import ODE_solvers as ODE
 from scipy.io import netcdf
 from scipy.interpolate import RegularGridInterpolator
 import plotting_code as plot
+import time
 
 def regular_grid_interpolator_fn(U, V, X, Y, TIME):
     '''
@@ -111,13 +112,17 @@ hyd.close()
 # print U_hyd
 # print TIME_hyd[-1], TIME_hyd[0]
 #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-nx = 300
-ny = 300
+nx = 30
+ny = 30
 t_0 = TIME_hyd[10]                  # Initial time
 int_time  = 5#hydro data goes ~211-264
 dt_min = np.sign(int_time)*0.01
 dt_max = np.sign(int_time)*0.2
+<<<<<<< Updated upstream
 adaptive_error_tol = 10**-5
+=======
+adaptive_error_tol = 10**-2
+>>>>>>> Stashed changes
 
 # Compute nx*ny grid of coordinates
 X = np.linspace(0.,10.,512)
@@ -133,6 +138,7 @@ coord_grid = np.array(np.meshgrid(xx,yy,indexing='xy'))
 # Compute auxiliary grid for differentiation
 aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 
+t_beforeloop = time.time()
 # Perform RKF45 scheme on aux_grid
 # final_positions = fn.rkf45_loop_fixed_step(
 #     derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
@@ -141,11 +147,14 @@ aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 # final_positions = fn.rk4_loop(
 #     derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
 #     t_0=t_0,
-#     int_time=int_time, dt = 0.02,return_data=False)
+#     int_time=int_time, dt = 0.2,return_data=False)
 # NEW RKF45 SCHEME
 final_positions = ODE.dp45_loop(derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
     t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max,
     maxiters = 1000, atol = adaptive_error_tol, rtol = adaptive_error_tol)
+
+t_afterloop = time.time()
+print "Time taken to integrate ODE:", t_afterloop - t_beforeloop
 
 #print final_positions
 jac = fn.jacobian_matrix_aux(final_positions,aux_grid_spacing=aux_grid_spacing)
