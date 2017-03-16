@@ -54,8 +54,9 @@ def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_to
     ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
     ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
     #ax.text(0.3,1.02,'average dt = %.2e' %np.average(dt), transform=ax.transAxes)
+
     if not adap_error_tol == 0:
-        ax.text(0.6,-0.17,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
+        ax.text(0.3,1.02,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
     cbar_ax = fig.add_axes([0.855, 0.15, 0.025, 0.75])
     #cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
     #ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')

@@ -117,7 +117,7 @@ t_0 = TIME_hyd[10]                  # Initial time
 int_time  = 5#hydro data goes ~211-264
 dt_min = np.sign(int_time)*0.01
 dt_max = np.sign(int_time)*0.2
-adaptive_error_tol = 10**-4
+adaptive_error_tol = 10**-5
 
 # Compute nx*ny grid of coordinates
 X = np.linspace(0.,10.,512)
@@ -143,7 +143,7 @@ aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 #     t_0=t_0,
 #     int_time=int_time, dt = 0.02,return_data=False)
 # NEW RKF45 SCHEME
-final_positions = ODE.rkf45_loop(derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
+final_positions = ODE.dp45_loop(derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
     t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max,
     maxiters = 1000, atol = adaptive_error_tol, rtol = adaptive_error_tol)
 
@@ -158,4 +158,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0, adaptive_error_tol)#, colour_range=(0,0.1))
+plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0, adap_error_tol=adaptive_error_tol)#, colour_range=(0,0.1))
