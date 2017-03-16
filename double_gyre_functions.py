@@ -49,13 +49,20 @@ def main(amplitude, epsilon, omega, nx, ny, aux_grid_spacing, t_0, int_time, ada
 		print "RK4 method used"
 
 	if method == 'rkf45':
+		print "OLD VERSION OF RKF45 USED WHERE NO RESTEPPING OCCURS"
 		final_pos = fn.rkf45_loop(derivs=analytic_velocity, aux_grid=a_grid,
 			adaptive_error_tol=adaptive_error_tol, t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max)
+		print "OLD VERSION OF RKF45 USED WHERE NO RESTEPPING OCCURS"
 
 		print "RKF45 full adaptive grid method used"
 
 	if method == 'rkf45error':
 		final_pos = ODE.rkf45_loop(derivs=analytic_velocity, aux_grid=a_grid,
+			t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max,
+			maxiters = 1000, atol = adaptive_error_tol, rtol = adaptive_error_tol)
+
+	if method == 'dp45':
+		final_pos = ODE.dp45_loop(derivs=analytic_velocity, aux_grid=a_grid,
 			t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max,
 			maxiters = 1000, atol = adaptive_error_tol, rtol = adaptive_error_tol)
 	# Calculate jacobian matrix
@@ -134,8 +141,8 @@ def analytic_velocity(coordinates, time_array):
 #
 ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
 	nx=50, ny=25, aux_grid_spacing=1.*10**-5,
-	t_0=5., int_time=15., adaptive_error_tol=1.*10**-4,
-	dt_min=0.01, dt_max=0.8, method = 'rkf45error')
+	t_0=5., int_time=15., adaptive_error_tol=1.*10**-2,
+	dt_min=0.01, dt_max=0.8, method = 'dp45')
 
 
 import matplotlib.pyplot as plt

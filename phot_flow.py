@@ -111,7 +111,7 @@ fh.close()
 nx = 500
 ny = 500
 t_0 = TIME[0]                  # Initial time
-aux_grid_spacing = 10
+aux_grid_spacing = 10 # Fix aux_grid_spacing to scale with grid size
 int_time  = 14400 # in seconds (21600s = 6 hrs)
 dt_min = np.sign(int_time)*10
 dt_max = np.sign(int_time)*250
