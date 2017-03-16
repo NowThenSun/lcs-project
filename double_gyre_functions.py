@@ -140,8 +140,8 @@ def analytic_velocity(coordinates, time_array):
 
 #
 ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
-	nx=50, ny=25, aux_grid_spacing=1.*10**-5,
-	t_0=5., int_time=15., adaptive_error_tol=1.*10**-2,
+	nx=300, ny=150, aux_grid_spacing=1.*10**-5,
+	t_0=5., int_time=15., adaptive_error_tol=1.*10**-4,
 	dt_min=0.01, dt_max=0.8, method = 'dp45')
 
 
@@ -195,6 +195,6 @@ ax.set_position(pos2) # set a new position
 #ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
 ax.set_xlabel('x')
 ax.set_ylabel('y')
-cb = fig.colorbar(im, cax=cbar_ax, ticks=np.arange(8.)/10.)
+cb = fig.colorbar(im, cax=cbar_ax ) #ticks=np.arange(8.)/10.
 # plt.savefig('DG_FTLE_-1A_-15e_15T_5t0_1000x500_v4.pdf',transparent=True,bbox_inches='tight')
 plt.show()
