@@ -111,16 +111,17 @@ fh.close()
 nx = 500
 ny = 500
 t_0 = TIME[0]                  # Initial time
-aux_grid_spacing = 10 # Fix aux_grid_spacing to scale with grid size
 int_time  = 14400 # in seconds (21600s = 6 hrs)
 dt_min = np.sign(int_time)*10
 dt_max = np.sign(int_time)*250
 #adap_error_tol = 0.001
 
-
+grid_lim_step = 2
+X_min,X_max, Y_min, Y_max = (X[grid_lim_step],X[-grid_lim_step-1],Y[grid_lim_step],Y[-grid_lim_step-1])  # Limit initial grid size
+aux_grid_spacing = ((X_max-X_min)/nx)*0.08
 # Compute nx*ny grid of coordinates
-xx = np.linspace(X[0]+1/(2.*nx),X[-1]-1/(2.*nx), nx)
-yy = np.linspace(Y[0]+1/(2.*ny),Y[-1]-1/(2.*ny), ny)
+xx = np.linspace(X_min,X_max, nx)
+yy = np.linspace(Y_min,Y_max, ny)
 coord_grid = np.array(np.meshgrid(xx,yy,indexing='xy'))
 # Compute auxiliary grid for differentiation
 aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
@@ -141,4 +142,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adap_error_tol=0)#, colour_range=(-0.0001,0.0001))
+plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0, adap_error_tol=0)#, colour_range=(-0.0001,0.0001))

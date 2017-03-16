@@ -111,10 +111,9 @@ hyd.close()
 # print U_hyd
 # print TIME_hyd[-1], TIME_hyd[0]
 #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-nx = 100
-ny = 100
+nx = 300
+ny = 300
 t_0 = TIME_hyd[10]                  # Initial time
-aux_grid_spacing = (10/nx)*0.08
 int_time  = 5#hydro data goes ~211-264
 dt_min = np.sign(int_time)*0.01
 dt_max = np.sign(int_time)*0.2
@@ -123,7 +122,9 @@ adaptive_error_tol = 10**-4
 # Compute nx*ny grid of coordinates
 X = np.linspace(0.,10.,512)
 Y = np.linspace(0.,10.,512)
-X_min,X_max, Y_min, Y_max = (2.,8.,2.,8.)
+X_min,X_max, Y_min, Y_max = (2.,8.,2.,8.)  # Limit initial grid size
+aux_grid_spacing = ((X_max-X_min)/nx)*0.08
+
 
 xx = np.linspace(X_min, X_max, nx)
 yy = np.linspace(Y_min, Y_max, ny)
