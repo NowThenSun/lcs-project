@@ -50,17 +50,17 @@ def rkf45(y, time, dt, derivs, atol, rtol):
 	#5th order method
 	Y_next = y + B1*k1 + B2*k2 + B3*k3 + B4*k4 + B5*k5 + B6*k6 + B7*k7
 	# difference between different orderered solutions - taking the Euclidean norm
-	delta =np.abs ( ((b1-B1)*k1 + (b2-B2)*k2 + (b3-B3)*k3 + (b4-B4)*k4 + (b5-B5)*k5 + (b6-B6)*k6 + (b7-B7)*k7)[0]**2
-	+((b1-B1)*k1 + (b2-B2)*k2 + (b3-B3)*k3 + (b4-B4)*k4 + (b5-B5)*k5 + (b6-B6)*k6 + (b7-B7)*k7)[1]**2 )
+	delta = (np.sqrt( ((b1-B1)*k1 + (b2-B2)*k2 + (b3-B3)*k3 + (b4-B4)*k4 + (b5-B5)*k5 + (b6-B6)*k6 + (b7-B7)*k7)[0]**2
+	+((b1-B1)*k1 + (b2-B2)*k2 + (b3-B3)*k3 + (b4-B4)*k4 + (b5-B5)*k5 + (b6-B6)*k6 + (b7-B7)*k7)[1]**2 ))
 	# full error tolerance
 	scale = atol + np.sqrt(np.maximum(y,y_next)[0]**2+np.maximum(y,y_next)[1]**2)*rtol
 	# Calculate scaling factor s for the stepsize
 	s = np.zeros_like(dt)
-	#s =(adaptive_error_tol*dt/(2.*delta))**0.25
+	#s =(atol*dt/(2.*delta))**0.25
 	s = np.where(dt==0, 0., 0.84*(scale/delta)**0.2)
 
 
-	return y_next, s, delta
+	return y_next, s, delta, scale
 
 
 
@@ -87,7 +87,7 @@ def rkf45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, 
 	pos 						final array of positions
 	flag						error flag
 								0   no errors
-								1   hmin exceeded (not )
+								1   hmin exceeded (not implemented at the moment)
 								2   maximum iterations exceeded
 	'''
 	print "RKF45 LOOP INITIATED"
@@ -112,9 +112,9 @@ def rkf45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, 
 		# Use various conditions to keep dt bounded and not overstep past the final integration time
 		else:
 			#Perform step through dt first
-			pos_new, s, delta = rkf45(pos, time, dt, derivs, atol, rtol)
+			pos_new, s, delta,scale = rkf45(pos, time, dt, derivs, atol, rtol)
 			# Total Error tolerance
-			scale = atol + np.sqrt(np.maximum(pos,pos_new)[0]**2+np.maximum(pos,pos_new)[1]**2)*rtol
+			#scale = atol + np.sqrt(np.maximum(pos,pos_new)[0]**2+np.maximum(pos,pos_new)[1]**2)*rtol
 			# If delta < tol step is successful so update times and positions
 			time = np.where(delta<scale,time+dt,time)
 			pos = np.where(delta<scale,pos_new,pos)

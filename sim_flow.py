@@ -4,6 +4,8 @@ Module for calculating the FTLE field of the simulated hydrodynamc and dynamo fl
 from __future__ import division
 import numpy as np
 import general_functions as fn
+import ODE_solvers as ODE
+
 from scipy.io import netcdf
 from scipy.interpolate import RegularGridInterpolator
 import plotting_code as plot
@@ -109,14 +111,14 @@ hyd.close()
 # print U_hyd
 # print TIME_hyd[-1], TIME_hyd[0]
 #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-nx = 100
-ny = 100
-t_0 = TIME_hyd[0]                  # Initial time
-aux_grid_spacing = 0.1
+nx = 10
+ny = 10
+t_0 = TIME_hyd[10]                  # Initial time
+aux_grid_spacing = (12000/nx)*0.08
 int_time  = 5#hydro data goes ~211-264
-dt_min = np.sign(int_time)*0.01
-dt_max = np.sign(int_time)*5
-adap_error_tol = 4
+dt_min = np.sign(int_time)*0.003
+dt_max = np.sign(int_time)*0.1
+adaptive_error_tol = 5000
 
 # Compute nx*ny grid of coordinates
 X = np.linspace(0.,10.,512)
@@ -133,10 +135,16 @@ aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 #     derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
 #     adaptive_error_tol=adap_error_tol, t_0=t_0,
 #     int_time=int_time, dt_min=dt_min, dt_max = dt_max)
-final_positions,all_pos = fn.rk4_loop(
-    derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
-    t_0=t_0,
-    int_time=int_time, dt = 0.02,return_data=True)
+# final_positions,all_pos = fn.rk4_loop(
+#     derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
+#     t_0=t_0,
+#     int_time=int_time, dt = 0.02,return_data=True)
+# NEW RKF45 SCHEME
+final_positions = ODE.rkf45_loop(derivs=regular_grid_interpolator_fn(U_hyd, V_hyd, X, Y, TIME_hyd)[1], aux_grid=aux_grid,
+    t_0=t_0, int_time=int_time, dt_min=dt_min,dt_max= dt_max,
+    maxiters = 1000, atol = adaptive_error_tol, rtol = adaptive_error_tol)
+
+
 jac = fn.jacobian_matrix_aux(final_positions,aux_grid_spacing=aux_grid_spacing)
 cgst = fn.cauchy_green_tensor(jac)
 ev = np.linalg.eigvalsh(cgst)
@@ -145,4 +153,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adap_error_tol)#, colour_range=(0,0.1))
+plot.FTLE_plot(ftle, X[0], X[-1], Y[0], Y[-1], int_time, t_0, adaptive_error_tol)#, colour_range=(0,0.1))

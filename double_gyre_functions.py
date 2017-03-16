@@ -133,7 +133,7 @@ def analytic_velocity(coordinates, time_array):
 
 #
 ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
-	nx=500, ny=250, aux_grid_spacing=1.*10**-5,
+	nx=50, ny=25, aux_grid_spacing=1.*10**-5,
 	t_0=5., int_time=15., adaptive_error_tol=1.*10**-4,
 	dt_min=0.01, dt_max=0.8, method = 'rkf45error')
 
