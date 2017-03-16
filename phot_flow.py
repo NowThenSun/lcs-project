@@ -127,15 +127,15 @@ coord_grid = np.array(np.meshgrid(xx,yy,indexing='xy'))
 aux_grid = fn.generate_auxiliary_grid(coord_grid, aux_grid_spacing)
 # Perform RKF45 scheme on aux_grid
 t_beforeloop = time.time()
-# final_positions = ODE.rkf45_loop(
-#     derivs=regular_grid_interpolator_fn(U, V, X, Y, TIME)[1], aux_grid=aux_grid,
-#     t_0=t_0,
-#     int_time=int_time, dt_min=dt_min, dt_max = dt_max,maxiters = 1000, atol=0.0001, rtol =0.0001)#00001)
-final_positions = fn.rk4_loop(
+final_positions = ODE.rkf45_loop(
     derivs=regular_grid_interpolator_fn(U, V, X, Y, TIME)[1], aux_grid=aux_grid,
     t_0=t_0,
-    int_time=int_time, dt = 250,return_data=False)
-t_afterloop = time.time()
+    int_time=int_time, dt_min=dt_min, dt_max = dt_max,maxiters = 1000, atol=0.0001, rtol =0.0001)#00001)
+# final_positions = fn.rk4_loop(
+#     derivs=regular_grid_interpolator_fn(U, V, X, Y, TIME)[1], aux_grid=aux_grid,
+#     t_0=t_0,
+#     int_time=int_time, dt = 250,return_data=False)
+# t_afterloop = time.time()
 print "Time taken to integrate ODE:", t_afterloop - t_beforeloop
 
 jac = fn.jacobian_matrix_aux(final_positions,aux_grid_spacing=aux_grid_spacing)
