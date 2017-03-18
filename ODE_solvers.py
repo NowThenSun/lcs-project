@@ -45,7 +45,8 @@ def dp45(y, time, dt, derivs, atol, rtol):
 	delta = y_next - Y_next
 	scale = atol + np.maximum(np.abs(y),np.abs(y_next))*rtol
 	err = np.sqrt(0.5*((delta[0]/scale[0])**2+(delta[1]/scale[1])**2))
-	print "shape of error:", np.shape(err)
+	#print "shape of error:", np.shape(err)
+	print err
 	#s =(atol*dt/(2.*delta))**0.25
 	safety_factor = 0.97
 	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)
@@ -85,7 +86,7 @@ def dp45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, r
 	# Set initial position to aux. grid
 	pos = np.zeros_like(aux_grid)
 	pos[:] = aux_grid[:]
-
+	s = np.ones_like(dt)
 
 	for k in xrange(maxiters):
 		# Condition that if for all grid points k*dt = int_time the integration is complete
@@ -97,11 +98,14 @@ def dp45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, r
 		# Use various conditions to keep dt bounded and not overstep past the final integration time
 		else:
 			#Perform step through dt first
+			s_prev = s
 			pos_new, s, err = dp45(pos, time, dt, derivs, atol, rtol)
 			# Total Error tolerance
 			# If delta < tol step is successful so update times and positions
 			time = np.where(err<1,time+dt,time)
 			pos = np.where(err<1,pos_new,pos)
+			mybool = (err>1) & (s>s_prev)
+			s = np.where(mybool==True,s_prev,s )
 			# Keep s restricted between 0.1-4 of the previous value
 			s[s<0.1] = 0.1
 			s[s>4] = 4
