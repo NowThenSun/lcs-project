@@ -1,22 +1,33 @@
 '''
-Module that creates 1D plots over ridges in the double gyre field to compare errors in peaks at different resolutions, methods and different time steps
-compare to RKF45 that alternates all of the timesteps
-Can also compare dgyre analytic to different interpolation functions
+Module for comparing the 1D plots of different ODE methods for photospheric flow data
 '''
 from __future__ import division
 import numpy as np
 import general_functions as fn
-import double_gyre_functions as dg
 import matplotlib.pyplot as plt
+import ODE_solvers as ODE
+import interpolating_functions as interp
+from scipy.io import netcdf
 
+# Code to access netcdf data file
+fh = netcdf.netcdf_file('data/phot_flow_welsch.nc', 'r', mmap=False)
 
+print fh.variables.keys()
+
+X = fh.variables['X'][:]
+Y = fh.variables['Y'][:]
+U = fh.variables['U'][:]  #T x Y x X sized array (assume its Y x X order)
+V = fh.variables['V'][:]
+TIME = fh.variables['TIME'][:]
+
+fh.close()
 
 #~~~~~ 1D PLOTTING PARAMETERS ~~~~~
-y = 0.3                                  # fixed y-value the FTLE is evaluated at
-x0 = 1.0                                # first x value
-x1 = 1.2                                # final x value
-res = np.array([50,300,500]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
-actual_res = res*2./(x1-x0)     # True resolution on a full [0,2]x[0,1] double gyre domain
+y = 8000                                # fixed y-value the FTLE is evaluated at
+x0 =  4000                                  # initial x value
+x1 = 6000                                # final x value
+res = np.array([50,300,500]) # Resolutions tested at (number of grid points between x0 and x1)               0.2/100 ~ 1000x500 res
+grid_spacing = (x1-x0)/res
 # double gyre parameters - Note: dg.gyre_global_params's global parameters have dg. in front of them so primarily exist within the dg module (although can still be called upon here with e.g. dg.amplitude_g)
 dg_params = dg.gyre_global_params(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.)
 # other parameters
