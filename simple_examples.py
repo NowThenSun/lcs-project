@@ -48,6 +48,10 @@ def ex3(coordinates,time_array):
     v = -coordinates[1]
     return u, v  #Note this returns (u,v) as a tuple
 
+def ex4(coordinates,time_array):
+    u = coordinates[0] + 2*coordinates[0]**3
+    v = -coordinates[1]
+    return u, v  #Note this returns (u,v) as a tuple
 
 
 def plot_fluid_parcel(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yupper = 2,
@@ -161,38 +165,41 @@ def plot_streamlines(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yupp
 
     plt.axhline(y=0,xmin=0,xmax=1, lw= mlw, c='Black' )
     plt.axvline(x=0, lw = mlw, c= 'Black')
-    plt.axvline(x=1, lw = mlw, c= 'Black')
-    plt.axvline(x=-1,lw = mlw, c= 'Black')
+    # plt.axvline(x=1, lw = mlw, c= 'Black')
+    # plt.axvline(x=-1,lw = mlw, c= 'Black')
     ax.set_xlabel('x')
     ax.set_ylabel('y')
     plt.xlim(xlower,xupper)
     plt.ylim(ylower,yupper)
 
+    plt.xticks([0.])
+    plt.yticks([0.])
+
     plt.arrow(0.0,0,0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
     plt.arrow(0.0,0,-0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
-    plt.arrow(-2,0,0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
-    plt.arrow(2,0,-0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    # plt.arrow(-2,0,0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    # plt.arrow(2,0,-0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
 
     hw = 0.06
     hl = 0.1
-    plt.arrow(1.,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    # plt.arrow(1.,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
     plt.arrow(0,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
-    plt.arrow(-1.,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    # plt.arrow(-1.,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
 
-    plt.arrow(1 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    # plt.arrow(1 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
     plt.arrow(0 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
-    plt.arrow(-1 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    # plt.arrow(-1 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
     fprad = 0.03
     fp1 = plt.Circle((0, 0), fprad, color='Black', zorder=3)
     fp2 = plt.Circle((-1, 0), fprad, color='Black', zorder=3)
     fp3 = plt.Circle((1, 0), fprad, color='Black',zorder=3)
     ax.add_artist(fp1)
-    ax.add_artist(fp2)
-    ax.add_artist(fp3)
+    # ax.add_artist(fp2)
+    # ax.add_artist(fp3)
 
 
-    plt.savefig('streamplot_LE.pdf')#,transparent=True)
+    plt.savefig('streamplot_Saddle.pdf')#,transparent=True)
 
     plt.show()
 
-plot_streamlines(nx= 20, ny = 20, velocity_example=ex3)
+plot_streamlines(nx= 20, ny = 20,xlower=-1.2,xupper=1.2,ylower=-1.2,yupper=1.2, velocity_example=ex4)
