@@ -34,6 +34,21 @@ def ex2(coordinates,time_array):
     v = -coordinates[1]
     return u, v  #Note this returns (u,v) as a tuple
 
+def ex3(coordinates,time_array):
+    '''
+    Function that calculates the analytic velocity for simple time-independent analytic examples for an array of coordinates
+    ~~~~~~~~~~
+    Inputs:
+    coordinates = 2*ny*nx(*x) sized array of input coordinates (where x can be any integer)
+    ~~~~~~~~~~
+    Outputs:
+    u, v = analytic velocity fields (same shape as the input coordinates)
+    '''
+    u = coordinates[0] - coordinates[0]**3
+    v = -coordinates[1]
+    return u, v  #Note this returns (u,v) as a tuple
+
+
 
 def plot_fluid_parcel(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yupper = 2,
     velocity_example = ex2,
@@ -100,11 +115,84 @@ def plot_fluid_parcel(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yup
     plt.show()
 
 
-plot_fluid_parcel(diam_blob=1.2, corner_pos_blob=(-2,-0.6))  # Default parameters for example2
+# plot_fluid_parcel(diam_blob=1.2, corner_pos_blob=(-2,-0.6))  # Default parameters for example2
+#
+# plot_fluid_parcel(nx = 20, ny = 20, xlower = -1.3, xupper = 1.3,ylower = -1.3, yupper = 1.3,
+#     velocity_example = ex1,
+#     density_blob=200,diam_blob = 0.2 , corner_pos_blob=  (-0.1, 0.85),
+#     blob_timestep1 = 5, blob_timestep2 = 10, blob_timestep3 = -1,
+#     t_0=0, int_time=2.4, dt=0.06
+#     )  # parameters for example1
 
-plot_fluid_parcel(nx = 20, ny = 20, xlower = -1.3, xupper = 1.3,ylower = -1.3, yupper = 1.3,
-    velocity_example = ex1,
-    density_blob=200,diam_blob = 0.2 , corner_pos_blob=  (-0.1, 0.85),
-    blob_timestep1 = 5, blob_timestep2 = 10, blob_timestep3 = -1,
-    t_0=0, int_time=2.4, dt=0.06
-    )  # parameters for example1
+# plot_fluid_parcel(nx = 20, ny = 20, xlower = -2.5, xupper = 2.5,ylower = -2.5, yupper = 2.5,
+#     velocity_example = ex3,
+#     density_blob=200,diam_blob = 0.2 , corner_pos_blob=  (-0.5, 0.85),
+#     blob_timestep1 = 5, blob_timestep2 = 15, blob_timestep3 = -1,
+#     t_0=0, int_time=2.4, dt=0.06
+#     )  # parameters for example1
+
+
+def plot_streamlines(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yupper = 2,
+    velocity_example = ex2,
+    ):
+    '''
+    Plotting code to plot streamlines and dynamical systems like plots.
+
+    '''
+    X = np.linspace(xlower, xupper, nx)
+    Y = np.linspace(ylower, yupper, ny)
+    coords = np.meshgrid(X, Y, indexing='xy')
+    U,V = velocity_example(coords,"doesnt matter")
+    # Want to seed initial points
+    #Define a dense fluid square blob
+
+
+    fig= plt.figure()
+    ax = plt.axes()
+    #start_points =  [[0,0],[1,1],[1,-1],[1,0],[-1,0],[-1,1],[-1,-1],[0,1],[0,-1]]
+    ax.streamplot(X,Y,U,V, color='cornflowerblue', density=0.5)
+
+
+    mlw = 1.5
+    hl = 0.06
+    hw = 0.1
+    oh = 0.3
+
+
+    plt.axhline(y=0,xmin=0,xmax=1, lw= mlw, c='Black' )
+    plt.axvline(x=0, lw = mlw, c= 'Black')
+    plt.axvline(x=1, lw = mlw, c= 'Black')
+    plt.axvline(x=-1,lw = mlw, c= 'Black')
+    ax.set_xlabel('x')
+    ax.set_ylabel('y')
+    plt.xlim(xlower,xupper)
+    plt.ylim(ylower,yupper)
+
+    plt.arrow(0.0,0,0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    plt.arrow(0.0,0,-0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    plt.arrow(-2,0,0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    plt.arrow(2,0,-0.5,0.0, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+
+    hw = 0.06
+    hl = 0.1
+    plt.arrow(1.,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    plt.arrow(0,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    plt.arrow(-1.,1.,0,-0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+
+    plt.arrow(1 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    plt.arrow(0 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    plt.arrow(-1 , -1 , 0, 0.5, lw = mlw, head_width = hw, head_length=hl, overhang=oh, ec='none', fill=True, fc='Black', ls='--', zorder=3)
+    fprad = 0.03
+    fp1 = plt.Circle((0, 0), fprad, color='Black', zorder=3)
+    fp2 = plt.Circle((-1, 0), fprad, color='Black', zorder=3)
+    fp3 = plt.Circle((1, 0), fprad, color='Black',zorder=3)
+    ax.add_artist(fp1)
+    ax.add_artist(fp2)
+    ax.add_artist(fp3)
+
+
+    plt.savefig('streamplot_LE.pdf')#,transparent=True)
+
+    plt.show()
+
+plot_streamlines(nx= 20, ny = 20, velocity_example=ex3)
