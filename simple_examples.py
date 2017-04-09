@@ -146,7 +146,7 @@ def plot_streamlines(nx = 7, ny = 7, xlower = -2., xupper = 2.,ylower = -2, yupp
     X = np.linspace(xlower, xupper, nx)
     Y = np.linspace(ylower, yupper, ny)
     coords = np.meshgrid(X, Y, indexing='xy')
-    U,V = velocity_example(coords,"doesnt matter")
+    U,V = velocity_example(coords,"doesnt matter (in autonomous case)")
     # Want to seed initial points
     #Define a dense fluid square blob
 

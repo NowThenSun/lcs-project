@@ -66,4 +66,4 @@ def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_to
     if save_name == False:
         plt.show()
     else:
-        print "ohio"
+        plt.savefig(save_name, bbox_inches='tight')

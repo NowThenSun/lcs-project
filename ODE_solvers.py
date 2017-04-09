@@ -46,7 +46,7 @@ def dp45(y, time, dt, derivs, atol, rtol):
 	scale = atol + np.maximum(np.abs(y),np.abs(y_next))*rtol
 	err = np.sqrt(0.5*((delta[0]/scale[0])**2+(delta[1]/scale[1])**2))
 	#print "shape of error:", np.shape(err)
-	print err
+	# print err
 	#s =(atol*dt/(2.*delta))**0.25
 	safety_factor = 0.97
 	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)

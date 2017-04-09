@@ -31,8 +31,8 @@ nx = 300
 ny = 300
 t_0 = TIME_hyd[10]                  # Initial time
 int_time  = 5#hydro data goes ~211-264
-dt_min = np.sign(int_time)*0.005
-dt_max = np.sign(int_time)*0.01
+dt_min = np.sign(int_time)*0.01
+dt_max = np.sign(int_time)*0.1
 adaptive_error_tol = 10**-3
 
 # Compute nx*ny grid of coordinates
@@ -65,6 +65,7 @@ final_positions = ODE.dp45_loop(derivs=interp.regular_grid_interpolator_fn(U_hyd
     maxiters = 1000, atol = adaptive_error_tol, rtol = adaptive_error_tol)
 
 t_afterloop = time.time()
+
 print "Time taken to integrate ODE:", t_afterloop - t_beforeloop
 
 #print final_positions
