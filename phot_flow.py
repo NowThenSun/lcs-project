@@ -26,13 +26,13 @@ TIME = fh.variables['TIME'][:]
 fh.close()
 def plot_phot(int_time, t_0 = TIME[0]):
     #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-    nx = 150
-    ny = 150
+    nx = 200
+    ny = 200
     # t_0 = TIME[0]                  # Initial time
     # int_time  = 400 # in seconds (21600s = 6 hrs)
     dt_min = np.sign(int_time)*10
     dt_max = np.sign(int_time)*250
-    etol = 0.0001
+    etol = 0.01
 
     grid_lim_step = 2
     X_min,X_max, Y_min, Y_max = (X[grid_lim_step],X[-grid_lim_step-1],Y[grid_lim_step],Y[-grid_lim_step-1])  # Limit initial grid size
@@ -50,7 +50,7 @@ def plot_phot(int_time, t_0 = TIME[0]):
         t_0=t_0,
         int_time=int_time, dt_min=dt_min, dt_max = dt_max,maxiters = 1000, atol=etol, rtol =etol)#00001)
     # final_positions = fn.rk4_loop(
-    #     derivs=regular_grid_interpolator_fn(U, V, X, Y, TIME)[1], aux_grid=aux_grid,
+    #     derivs=interp.regular_grid_interpolator_fn(U, V, X, Y, TIME)[1], aux_grid=aux_grid,
     #     t_0=t_0,
     #     int_time=int_time, dt = 250,return_data=False)
     t_afterloop = time.time()
@@ -66,13 +66,13 @@ def plot_phot(int_time, t_0 = TIME[0]):
     # Plotting code for plot of eigenvalues/FTLE field
     #labtop path
     # Google drive path
-    plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/nx%r_T%r_etol%r_t0rel%r.png" %(nx,int_time,etol,t_0-TIME[0])
+    plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/nx%r_t0rel%.1f_T%r_etol%r_dp45.png" %(nx,t_0-TIME[0],int_time,etol)
     plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0-TIME[0], adap_error_tol=0, colour_range=(-0.0001,0.0001), save_name = plot_name,g=1,s=0.8,r=1.2,sat=1)
 
 
-int_times_array = [14400]#np.arange(3600,7200,600)
-t_0_array = [0,5000,10000,15000]
-t_0_array += TIME[0]
+int_times_array = [-14400]#np.arange(3600,7200,600)
+t_0_array = [TIME[-1],TIME[-50]]
+# t_0_array += TIME[0]
 for k in xrange(len(t_0_array)):
-    print "Starting FTLE calculation for time", t_0_array[k]
+    print "Relative starting time for FTLE calculation", t_0_array[k] - TIME[0]
     plot_phot(int_time = int_times_array[0], t_0=t_0_array[k])
