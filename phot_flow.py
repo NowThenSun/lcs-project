@@ -24,11 +24,11 @@ V = fh.variables['V'][:]
 TIME = fh.variables['TIME'][:]
 
 fh.close()
-def plot_phot(int_time):
+def plot_phot(int_time, t_0 = TIME[0]):
     #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-    nx = 200
-    ny = 200
-    t_0 = TIME[0]                  # Initial time
+    nx = 150
+    ny = 150
+    # t_0 = TIME[0]                  # Initial time
     # int_time  = 400 # in seconds (21600s = 6 hrs)
     dt_min = np.sign(int_time)*10
     dt_max = np.sign(int_time)*250
@@ -66,10 +66,13 @@ def plot_phot(int_time):
     # Plotting code for plot of eigenvalues/FTLE field
     #labtop path
     # Google drive path
-    plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/nx%r_T%r_etol%r_limcrange.png" %(nx,int_time,etol)
-    plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0, adap_error_tol=0, colour_range=(-0.0002,0.0002), save_name = plot_name)
+    plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/nx%r_T%r_etol%r_t0rel%r.png" %(nx,int_time,etol,t_0-TIME[0])
+    plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0-TIME[0], adap_error_tol=0, colour_range=(-0.0001,0.0001), save_name = plot_name,g=1,s=0.8,r=1.2,sat=1)
 
 
-int_times_array = np.arange(600,10800,600)
-for k in xrange(len(int_times_array)):
-    plot_phot(int_time=int_times_array[k])
+int_times_array = [14400]#np.arange(3600,7200,600)
+t_0_array = [0,5000,10000,15000]
+t_0_array += TIME[0]
+for k in xrange(len(t_0_array)):
+    print "Starting FTLE calculation for time", t_0_array[k]
+    plot_phot(int_time = int_times_array[0], t_0=t_0_array[k])
