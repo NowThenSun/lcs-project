@@ -23,10 +23,10 @@ TIME = fh.variables['TIME'][:]
 fh.close()
 
 #~~~~~ 1D PLOTTING PARAMETERS ~~~~~
-y = 2000                                # fixed y-value the FTLE is evaluated at
-x0 = 1500                                  # initial x value
+y = 5000                                # fixed y-value the FTLE is evaluated at
+x0 = X[0]                                  # initial x value
 x1 = 5500                                # final x value
-res = np.array([50,200,400,700]) # Resolutions tested at (number of grid points between x0 and x1)               0.2/100 ~ 1000x500 res
+res = np.array([200,500]) # Resolutions tested at (number of grid points between x0 and x1)               0.2/100 ~ 1000x500 res
 grid_spacing = (x1-x0)/res
 #True resolution calculation
 # Main parameter (need to make sure this matches with grid_lim_step used in data calculation)
@@ -36,17 +36,17 @@ actual_res = (X_max-X_min)*res/(x1-x0)
 
 # other parameters
 aux_grid_spacing = grid_spacing*0.08
-rkf45_error_tol = 1*10**-3
+rkf45_error_tol = 1*10**2
 dp45_error_tol = rkf45_error_tol
 t_0 = TIME[-1]
 int_time = -14400
 dt_min = np.sign(int_time)*10
-dt_max = np.sign(int_time)*250
-dt_fixed = np.sign(int_time)*250      # timestep used for RK4 integration
+dt_max = np.sign(int_time)*300
+dt_fixed = np.sign(int_time)*300      # timestep used for RK4 integration
 
 
 # Bools of which methods are compared
-Truez=False  
+Truez=False
 RK4 = True
 RKF45 = True
 DP45 = True

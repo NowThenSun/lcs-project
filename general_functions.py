@@ -26,6 +26,7 @@ def generate_auxiliary_grid(original_grid, aux_grid_spacing):
 
 	#Initialise aux_grid same size as original grid but with extra axis of size 4 at the end
 	aux_grid = np.zeros(np.append(np.shape(original_grid),4))
+
 	aux_grid[:] = original_grid[...,np.newaxis]
 
 	aux_grid[0,...,0] -= aux_grid_spacing

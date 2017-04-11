@@ -71,9 +71,9 @@ def dp45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, r
 	~~~~~~~~~
 	Outputs:
 	pos 						final array of positions
-	flag						error flag
+	flag						error flag (not implemented at the moment)
 								0   no errors
-								1   hmin exceeded (not implemented at the moment)
+								1   hmin exceeded
 								2   maximum iterations exceeded
 	'''
 	print "DP45 LOOP INITIATED"
@@ -87,6 +87,8 @@ def dp45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, r
 	pos = np.zeros_like(aux_grid)
 	pos[:] = aux_grid[:]
 	s = np.ones_like(dt)
+	rejected_steps =0
+	prev_rej_steps = np.zeros_like(s)
 
 	for k in xrange(maxiters):
 		# Condition that if for all grid points k*dt = int_time the integration is complete
@@ -102,12 +104,167 @@ def dp45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, r
 			pos_new, s, err = dp45(pos, time, dt, derivs, atol, rtol)
 			# Total Error tolerance
 			# If delta < tol step is successful so update times and positions
-			time = np.where(err<1,time+dt,time)
-			pos = np.where(err<1,pos_new,pos)
+			time = np.where(err<=1,time+dt,time)
+			pos = np.where(err<=1,pos_new,pos)
+			# Restrict s from being > 1 when previous step was rejected
+			rej_bool = (s>1) & (prev_rej_steps == 1)
+			s[rej_bool] = 1
+
+			prev_rej_steps[err>1] = 1
+
+
+
+
+			# Restrict s from being >1 when step is rejected
+			mybool2 = (err>1) & (s>1)
+			s = np.where(mybool2==True, np.ones_like(s),s)
 			mybool = (err>1) & (s>s_prev)
+			# print np.average(s-s_prev)
 			s = np.where(mybool==True,s_prev,s )
+
+			rejected_steps+= np.count_nonzero(err>1)
+
 			# Keep s restricted between 0.1-4 of the previous value
-			s[s<0.1] = 0.1
+			# print "#nonzero s", np.count_nonzero(s)
+			mybool3 = (s<0.1) & (s!=0)
+			s[mybool3] = 0.1
+			s[s>4] = 4
+			print "Number of truth values", np.count_nonzero(rej_bool==True)
+
+			# Work out different conditions to impose onto dt
+			time_left = (int_time)-(time-t_0)
+			# Modify dt for each point in the grid by the recommended scalar s
+			dt *= s
+			# Set dt = dt_min if dt too small
+			dt = np.where(np.abs(dt)<np.abs(dt_min), dt_min, dt)
+			# Set = dt_max if dt too large
+			dt = np.where(np.abs(dt)>np.abs(dt_max), dt_max, dt)
+			# Finally set dt values which are less than a full step away to the size left
+			dt = np.where(np.abs(dt)>np.abs(time_left), time_left, dt)
+			# Note order that these conditions are taken in is important
+			# If time_left = 0, dt = 0 which keeps the time fixed at the final time once it reaches it
+
+			print np.count_nonzero(time-t_0!=int_time)
+			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+
+	print "# of rejected steps", rejected_steps
+	return pos
+
+
+
+
+
+def rkf45(y, time, dt, derivs, atol, rtol):
+	'''
+	Function that moves value of y forward by a single step of size dt by the 4/5th order Runge-Kutta-Fehlberg method that uses adaptive step sizing.
+	y is the whole coord grid in this case
+	etol : the error tolerance in dt
+	'''
+	# Initialise Runge-Kutta-Fehlberg coefficients
+	a2 = [1/4.]
+	a3 = [3/32. , 9/32. ]
+	a4 = [1932/2197. , -7200/2197. , 7296/2197. ]
+	a5 = [439/216. , -8. , 3680/513. , -845/4104. ]
+	a6 = [-8/27. , 2. , -3544/2565. , 1859/4104. , -11/40. ]
+	#4th order method coefficients
+	b1, b2, b3, b4, b5, b6, b7 = (25/216, 0, 1408/2565, 2197/4104, -1/5, 0, 0)
+	#5th order methd coefficients
+	B1, B2, B3, B4, B5, B6, B7 = (16/135, 0, 6656/12825, 28561/56430, -9/50, 2/55, 0)
+
+
+	k1 = dt*np.array(derivs(y, time))
+	#print np.shape(k1), np.shape(dt)
+	k2 = dt*np.array(derivs(y + a2*k1, time + np.sum(a2)*dt))
+	k3 = dt*np.array(derivs(y + a3[0]*k1 + a3[1]*k2, time + np.sum(a3)*dt))
+	k4 = dt*np.array(derivs(y + a4[0]*k1 + a4[1]*k2 + a4[2]*k3 ,time + np.sum(a4)*dt))
+	k5 = dt*np.array(derivs(y + a5[0]*k1 + a5[1]*k2 + a5[2]*k3 + a5[3]*k4, time + np.sum(a5)*dt))
+	k6 = dt*np.array(derivs(y + a6[0]*k1 + a6[1]*k2 + a6[2]*k3 + a6[3]*k4 + a6[4]*k5, time + np.sum(a6)*dt))
+	k7 = 0
+
+	# 4th order estimate for y_next
+	Y_next = y + b1*k1 + b2*k2 + b3*k3 + b4*k4 + b5*k5 + b6*k6 + b7*k7
+	# 5th order estimate to be used for y_next
+	y_next = y + B1*k1 + B2*k2 + B3*k3 + B4*k4 + B5*k5 + B6*k6 + B7*k7
+
+	delta = y_next - Y_next
+	scale = atol + np.maximum(np.abs(y),np.abs(y_next))*rtol
+	err = np.sqrt(0.5*((delta[0]/scale[0])**2+(delta[1]/scale[1])**2))
+	#print "shape of error:", np.shape(err)
+	# print err
+	#s =(atol*dt/(2.*delta))**0.25
+	safety_factor = 0.97
+	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)
+	#s = np.where(dt==0, 0., safety_factor*dt*(1./err)**0.25)
+	return y_next, s, err
+
+
+
+def rkf45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, rtol):
+	'''
+	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with timesteps varying for different points in the grid.
+	~~~~~~~~~
+	Parameters:				Inputs:
+	derivs 					function that returns the derivatives of the positions (velocity)
+	aux_grid  				2*ny*nx(*4) initial grid of coordinates (y(t0) = y0 = aux_grid)
+	t_0 					initial time
+	int_time 				time integrated over
+	dt_min 					impose minimum timestep allowed for adaptive method to choose
+	dt_max 					impose maximum timestep allowed for adaptive method to choose
+	maxiters				Maximum number of iterations
+	atol 					absolute error tolerance
+	rtol 					relative error tolerance (scaled by position values)
+	~~~~~~~~~
+	Outputs:
+	pos 						final array of positions
+	flag						error flag
+								0   no errors
+								1   hmin exceeded (not implemented at the moment)
+								2   maximum iterations exceeded
+	'''
+	print "RKF45 LOOP INITIATED"
+	# Initialise scalar of dt and times
+	time = np.zeros((np.shape(aux_grid)[1],np.shape(aux_grid)[2],np.shape(aux_grid)[3]))+t_0	# ny*nx*4 array of times
+	print "timeshape", np.shape(time)
+	# set initial dt -- use an array of dt's the same size as the grid
+	dt = np.zeros_like(time) + dt_min
+
+	# Set initial position to aux. grid
+	pos = np.zeros_like(aux_grid)
+	pos[:] = aux_grid[:]
+
+	s = np.ones_like(dt)
+	rejected_steps = 0
+
+	for k in xrange(maxiters):
+		# Condition that if for all grid points k*dt = int_time the integration is complete
+		if np.all(np.isclose(np.abs(int_time),np.abs(time-t_0))):
+			flag = 0
+			break
+
+		# Perform rkf45 stepping until all grid points reach the total integration time
+		# Use various conditions to keep dt bounded and not overstep past the final integration time
+		else:
+			#Perform step through dt first
+			s_prev = s
+			pos_new, s, err = dp45(pos, time, dt, derivs, atol, rtol)
+			# Total Error tolerance
+			# If delta < tol step is successful so update times and positions
+			time = np.where(err<=1,time+dt,time)
+			pos = np.where(err<=1,pos_new,pos)
+
+			# Restrict s from being >1 when step is rejected
+			mybool2 = (err>1) & (s>1)
+			s = np.where(mybool2==True, np.ones_like(s),s)
+			mybool = (err>1) & (s>s_prev)
+			# print np.average(s-s_prev)
+			s = np.where(mybool==True,s_prev,s )
+
+			rejected_steps+= np.count_nonzero(err>1)
+
+			# Keep s restricted between 0.1-4 of the previous value
+			# print "#nonzero s", np.count_nonzero(s)
+			mybool3 = (s<0.1) & (s!=0)
+			s[mybool3] = 0.1
 			s[s>4] = 4
 
 			# Work out different conditions to impose onto dt
@@ -125,13 +282,21 @@ def dp45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, r
 
 			print np.count_nonzero(time-t_0!=int_time)
 			print k, "average time =", np.average(time), "~~~~~~~~dt =", np.average(dt)
+			#break
+			#print positions-aux_grid
+	print "# of RKF45 rejected steps", rejected_steps
+
 	return pos
 
 
 
 
 
-def rkf45(y, time, dt, derivs, atol, rtol):
+
+
+
+
+def rkf45_alt(y, time, dt, derivs, atol, rtol):
 	'''
 	Function that moves value of y forward by a single step of size dt by the 4/5th order Runge-Kutta-Fehlberg method that uses adaptive step sizing.
 	y is the whole coord grid in this case
@@ -178,7 +343,7 @@ def rkf45(y, time, dt, derivs, atol, rtol):
 
 
 
-def rkf45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, rtol):
+def rkf45_loop_alt(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, rtol):
 	'''
 	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with timesteps varying for different points in the grid.
 	~~~~~~~~~
@@ -200,7 +365,7 @@ def rkf45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, 
 								1   hmin exceeded (not implemented at the moment)
 								2   maximum iterations exceeded
 	'''
-	print "RKF45 LOOP INITIATED"
+	print "RKF45 (ALTERNATIVE VERSION) LOOP INITIATED"
 	# Initialise scalar of dt and times
 	time = np.zeros((np.shape(aux_grid)[1],np.shape(aux_grid)[2],np.shape(aux_grid)[3]))+t_0	# ny*nx*4 array of times
 	print "timeshape", np.shape(time)
@@ -222,7 +387,7 @@ def rkf45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, 
 		# Use various conditions to keep dt bounded and not overstep past the final integration time
 		else:
 			#Perform step through dt first
-			pos_new, s, delta,scale = rkf45(pos, time, dt, derivs, atol, rtol)
+			pos_new, s, delta,scale = rkf45_alt(pos, time, dt, derivs, atol, rtol)
 			# Total Error tolerance
 			#scale = atol + np.sqrt(np.maximum(pos,pos_new)[0]**2+np.maximum(pos,pos_new)[1]**2)*rtol
 			# If delta < tol step is successful so update times and positions
