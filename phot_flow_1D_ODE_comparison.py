@@ -26,7 +26,7 @@ fh.close()
 y = 2000                                # fixed y-value the FTLE is evaluated at
 x0 = X[0]                                  # initial x value
 x1 = 5500                                # final x value
-res = np.array([20]) # Resolutions tested at (number of grid points between x0 and x1)               0.2/100 ~ 1000x500 res
+res = np.array([200,1000]) # Resolutions tested at (number of grid points between x0 and x1)               0.2/100 ~ 1000x500 res
 grid_spacing = (x1-x0)/res
 #True resolution calculation
 # Main parameter (need to make sure this matches with grid_lim_step used in data calculation)
@@ -41,9 +41,9 @@ dp45_error_tol = rkf45_error_tol
 t_0 = TIME[-1]
 int_time = -14400
 dt_min = np.sign(int_time)*10
-dt_max = np.sign(int_time)*300
+dt_max = np.sign(int_time)*200
 # dt_fixed = np.sign(int_time)*50      # timestep used for RK4 integration
-dt_fixed_array = [-25,-75,-200,-500]        # array of timesteps used for RK4 integration
+dt_fixed_array = [-200]        # array of timesteps used for RK4 integration
 
 
 # Bools of which methods are compared
@@ -120,7 +120,7 @@ for j in xrange(len(res)):
         ftle = np.log(ev_max)/(2.*np.abs(int_time))
         FTLE_list_DP45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),FTLE_list_DP45[j][0],':', alpha=dp_line_alpha, marker='x')
-        legends.append('DP45 nx%i etol = %r' %(actual_res[j], dp45_error_tol))
+        legends.append('DOPRI54 nx%i etol = %r' %(actual_res[j], dp45_error_tol))
 
 
 

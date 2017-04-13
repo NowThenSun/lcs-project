@@ -48,7 +48,7 @@ def dp45(y, time, dt, derivs, atol, rtol):
 	#print "shape of error:", np.shape(err)
 	# print err
 	#s =(atol*dt/(2.*delta))**0.25
-	safety_factor = 0.97
+	safety_factor = 0.9
 	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)
 	#s = np.where(dt==0, 0., safety_factor*dt*(1./err)**0.25)
 	return y_next, s, err
@@ -192,7 +192,7 @@ def rkf45(y, time, dt, derivs, atol, rtol):
 	#print "shape of error:", np.shape(err)
 	# print err
 	#s =(atol*dt/(2.*delta))**0.25
-	safety_factor = 0.97
+	safety_factor = 0.9
 	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)
 	#s = np.where(dt==0, 0., safety_factor*dt*(1./err)**0.25)
 	return Y_next, s, err
