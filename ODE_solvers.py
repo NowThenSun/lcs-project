@@ -187,7 +187,7 @@ def rkf45(y, time, dt, derivs, atol, rtol):
 	y_next = y + B1*k1 + B2*k2 + B3*k3 + B4*k4 + B5*k5 + B6*k6 + B7*k7
 
 	delta = y_next - Y_next
-	scale = atol + np.maximum(np.abs(y),np.abs(y_next))*rtol
+	scale = atol + np.maximum(np.abs(y),np.abs(Y_next))*rtol
 	err = np.sqrt(0.5*((delta[0]/scale[0])**2+(delta[1]/scale[1])**2))
 	#print "shape of error:", np.shape(err)
 	# print err
