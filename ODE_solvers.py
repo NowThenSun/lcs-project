@@ -195,7 +195,7 @@ def rkf45(y, time, dt, derivs, atol, rtol):
 	safety_factor = 0.97
 	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)
 	#s = np.where(dt==0, 0., safety_factor*dt*(1./err)**0.25)
-	return y_next, s, err
+	return Y_next, s, err
 
 
 
