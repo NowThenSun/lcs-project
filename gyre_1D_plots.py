@@ -9,13 +9,14 @@ import general_functions as fn
 import double_gyre_functions as dg
 import matplotlib.pyplot as plt
 import ODE_solvers as ODE
+import matplotlib
 
 
 #~~~~~ 1D PLOTTING PARAMETERS ~~~~~
 y = 0.3                                  # fixed y-value the FTLE is evaluated at
 x0 = 1.0                                # first x value
 x1 = 1.2                                # final x value
-res = np.array([50,300,500]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
+res = np.array([50,500,1000]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
 actual_res = res*2./(x1-x0)     # True resolution on a full [0,2]x[0,1] double gyre domain
 grid_spacing = (x1-x0)/res
 
@@ -23,7 +24,7 @@ grid_spacing = (x1-x0)/res
 dg_params = dg.gyre_global_params(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.)
 # other parameters
 aux_grid_spacing = 0.08*grid_spacing
-rkf45_error_tol = 1*10**-2
+rkf45_error_tol = 1*10**-4
 dp45_error_tol = rkf45_error_tol
 t_0 = 2.
 int_time = 10.
@@ -42,6 +43,7 @@ no_methods = [RK4,RKF45,DP45].count(True)
 
 fig = plt.figure()
 ax = plt.axes()
+
 ax.set_xlabel('x')
 ax.set_ylabel('FTLE')
 legends = []
@@ -70,7 +72,7 @@ for j in xrange(len(res)):
             # FTLE_list_RK4.append(ftle)
 
             plt.plot(np.linspace(x0,x1,res[j]),ftle[0],'-', alpha=line_alpha)
-            legends.append('RK4 nx%i dt = %.2f' %(actual_res[j], dt_fixed_array[k]))
+            legends.append(r'RK4: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\Delta t}$ = %.1f' %(grid_spacing[j], dt_fixed_array[k]))
 
     if RKF45 == True:
         # Use rkf45 integration scheme
@@ -87,7 +89,7 @@ for j in xrange(len(res)):
         # Append FTLE data to FTLE_list
         # FTLE_list_RKF45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),ftle[0],'--', alpha=line_alpha)
-        legends.append('RKF45 nx%i etol = %r' %(actual_res[j], rkf45_error_tol))
+        legends.append(r'RKF45: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\tau}$ =%.0e' %(grid_spacing[j], rkf45_error_tol))
 
     if DP45 == True:
         #DP45 scheme
@@ -103,14 +105,15 @@ for j in xrange(len(res)):
         ftle = np.log(ev_max)/(2.*np.abs(int_time))
         # FTLE_list_DP45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),ftle[0],':', alpha=dp_line_alpha, marker='x')
-        legends.append('DOPRI54 nx%i etol = %r' %(actual_res[j], dp45_error_tol))
+        legends.append(r'DOPRI54: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\tau}$ =%.0e' %(grid_spacing[j], dp45_error_tol))
 
 
 
 #
+
 plt.legend(legends)
 ax.text(0.8,1.02,'y = %r' %y, transform=ax.transAxes)
-ax.text(0.2,1.02,'t_0= %r' %(t_0), transform=ax.transAxes)
+ax.text(0.2,1.02,'$\mathregular{t_{0}}$= %r' %(t_0), transform=ax.transAxes)
 
 #plt.savefig('testfig23.pdf',transparent=True)
 plt.show()
