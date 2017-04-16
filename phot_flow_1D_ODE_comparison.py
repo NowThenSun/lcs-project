@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import ODE_solvers as ODE
 import interpolating_functions as interp
 from scipy.io import netcdf
+import time
 
 # Code to access netcdf data file
 fh = netcdf.netcdf_file('data/phot_flow_welsch.nc', 'r', mmap=False)
@@ -20,8 +21,12 @@ U = fh.variables['U'][:]  #T x Y x X sized array (assume its Y x X order)
 V = fh.variables['V'][:]
 TIME = fh.variables['TIME'][:]
 
-fh.close()
 
+fh.close()
+lenunits = 'km' #units of distance for axis labels
+INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 2006 (initial time of magnetograms)
+print time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime(INIT_TIME))
+REF_TIME = INIT_TIME - TIME[0]
 #~~~~~ 1D PLOTTING PARAMETERS ~~~~~
 y = 2000                                # fixed y-value the FTLE is evaluated at
 x0 = X[0]                                  # initial x value
@@ -59,7 +64,7 @@ FTLE_list_RKF45 = []
 FTLE_list_DP45 = []
 fig = plt.figure()
 ax = plt.axes()
-ax.set_xlabel('x')
+ax.set_xlabel('x (%s)' %lenunits)
 ax.set_ylabel('FTLE')
 legends = []
 line_alpha = 0.66
@@ -120,14 +125,14 @@ for j in xrange(len(res)):
         ftle = np.log(ev_max)/(2.*np.abs(int_time))
         FTLE_list_DP45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),FTLE_list_DP45[j][0],':', alpha=dp_line_alpha, marker='x')
-        legends.append('DOPRI54 nx%i etol = %r' %(actual_res[j], dp45_error_tol))
+        legends.append('DOPRI54 nx%i etol = %s' %(actual_res[j], dp45_error_tol))
 
 
 
 #
 plt.legend(legends)
-ax.text(0.8,1.02,'y = %r' %y, transform=ax.transAxes)
-ax.text(0.2,1.02,'t_0 (relative) = %r' %(t_0-TIME[0]), transform=ax.transAxes)
-
+ax.text(0.8,1.02,'y = %r %s' %(y,lenunits), transform=ax.transAxes)
+ax.text(0.0,1.02,'t_0= %s' %time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime((t_0 + REF_TIME))), transform=ax.transAxes)
+ax.text(0.55,1.02, 'T = %+.1f hrs' %(int_time/3600.) , transform=ax.transAxes)
 #plt.savefig('testfig23.pdf',transparent=True)
 plt.show()

@@ -16,7 +16,7 @@ import matplotlib
 y = 0.3                                  # fixed y-value the FTLE is evaluated at
 x0 = 1.0                                # first x value
 x1 = 1.2                                # final x value
-res = np.array([50,500,1000]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
+res = np.array([500,5000]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
 actual_res = res*2./(x1-x0)     # True resolution on a full [0,2]x[0,1] double gyre domain
 grid_spacing = (x1-x0)/res
 
@@ -72,7 +72,7 @@ for j in xrange(len(res)):
             # FTLE_list_RK4.append(ftle)
 
             plt.plot(np.linspace(x0,x1,res[j]),ftle[0],'-', alpha=line_alpha)
-            legends.append(r'RK4: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\Delta t}$ = %.1f' %(grid_spacing[j], dt_fixed_array[k]))
+            legends.append(r'RK4: $\mathregular{h_\mathrm{grid}}$=%.1e  , $\mathregular{\Delta t}$ = %.1f' %(grid_spacing[j], dt_fixed_array[k]))
 
     if RKF45 == True:
         # Use rkf45 integration scheme
@@ -114,6 +114,7 @@ for j in xrange(len(res)):
 plt.legend(legends)
 ax.text(0.8,1.02,'y = %r' %y, transform=ax.transAxes)
 ax.text(0.2,1.02,'$\mathregular{t_{0}}$= %r' %(t_0), transform=ax.transAxes)
+ax.text(0.4,1.02,'Resolution = %r' %actual_res, transform=ax.transAxes) # remove later
 
 #plt.savefig('testfig23.pdf',transparent=True)
 plt.show()
