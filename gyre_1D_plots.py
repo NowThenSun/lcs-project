@@ -41,6 +41,9 @@ DP45 = True
 no_methods = [RK4,RKF45,DP45].count(True)
 #list to put in final data of calculated FTLE fields
 
+#
+# from pylab import rcParams
+# rcParams['figure.figsize'] = 8,20
 fig = plt.figure()
 ax = plt.axes()
 

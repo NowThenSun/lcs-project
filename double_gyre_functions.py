@@ -138,6 +138,34 @@ def analytic_velocity(coordinates, time_array):
 	return u, v  #Note this returns (u,v) as a tuple
 
 
+def analytic_velocity_noglobal(epsilon_loc, amplitude_loc, omega_loc, coordinates, time_array):
+	'''
+	Function that calculates the analytic velocity for the double gyre for an array of coordinates and array of times, without requiring global parameters
+	~~~~~~~~~~
+	Inputs:
+	coordinates = 2*ny*nx(*x) sized array of input coordinates (where x can be any integer)
+	time_array = ny*nx(*x) sized array of times for each point in the grid
+	amplitude, epsilon, omega = the double gyre parameters
+	~~~~~~~~~~
+	Outputs:
+	u, v = analytic velocity fields of the double gyre (same shape as the input coordinates)
+	'''
+
+	a = epsilon_loc*np.sin(omega_loc*time_array)
+
+	b = 1. - 2.*epsilon_loc*np.sin(omega_loc*time_array)
+
+	f = a*coordinates[0]**2 + b*coordinates[0]
+	# df = df/dx
+	df = 2.*a*coordinates[0] + b
+
+	u = -np.pi*amplitude_loc*np.sin(np.pi*f)*np.cos(np.pi*coordinates[1])
+
+	v = np.pi*amplitude_loc*np.cos(np.pi*f)*np.sin(np.pi*coordinates[1])*df
+
+	return u, v  #Note this returns (u,v) as a tuple
+
+
 #
 # ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
 # 	nx=200, ny=100, aux_grid_spacing=1.*10**-5,
