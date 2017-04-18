@@ -160,9 +160,7 @@ def analytic_velocity_noglobal(epsilon_loc, amplitude_loc, omega_loc, coordinate
 	df = 2.*a*coordinates[0] + b
 
 	u = -np.pi*amplitude_loc*np.sin(np.pi*f)*np.cos(np.pi*coordinates[1])
-
 	v = np.pi*amplitude_loc*np.cos(np.pi*f)*np.sin(np.pi*coordinates[1])*df
-
 	return u, v  #Note this returns (u,v) as a tuple
 
 
