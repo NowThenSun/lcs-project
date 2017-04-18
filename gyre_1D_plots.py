@@ -16,7 +16,7 @@ import matplotlib
 y = 0.3                                  # fixed y-value the FTLE is evaluated at
 x0 = 1.0                                # first x value
 x1 = 1.2                                # final x value
-res = np.array([500,5000]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
+res = np.array([50,100,500]) # Resolutions tested at (number of grid spacing between x0 and x1)               0.2/100 ~ 1000x500 res
 actual_res = res*2./(x1-x0)     # True resolution on a full [0,2]x[0,1] double gyre domain
 grid_spacing = (x1-x0)/res
 
@@ -35,16 +35,18 @@ dt_fixed_array = [0.5]        # array of timesteps used for RK4 integration
 
 # Bools of which methods are compared
 Truez=False
-RK4 = True
-RKF45 = True
+RK4 = Truez
+RKF45 = Truez
 DP45 = True
 no_methods = [RK4,RKF45,DP45].count(True)
 #list to put in final data of calculated FTLE fields
-
+FTLE_list_DP45=[]
 #
+from mpl_toolkits.axes_grid1.inset_locator import zoomed_inset_axes
+from mpl_toolkits.axes_grid1.inset_locator import mark_inset
 # from pylab import rcParams
 # rcParams['figure.figsize'] = 8,20
-fig = plt.figure()
+fig = plt.figure(figsize=(8,6))
 ax = plt.axes()
 
 ax.set_xlabel('x')
@@ -52,6 +54,7 @@ ax.set_ylabel('FTLE')
 legends = []
 line_alpha = 0.66
 dp_line_alpha = 0.7
+
 
 for j in xrange(len(res)):
     print "Grid spacing =", grid_spacing[j]
@@ -106,18 +109,33 @@ for j in xrange(len(res)):
         ev = np.linalg.eigvalsh(cgst)
         ev_max = np.amax(ev,-1)
         ftle = np.log(ev_max)/(2.*np.abs(int_time))
-        # FTLE_list_DP45.append(ftle)
+        FTLE_list_DP45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),ftle[0],':', alpha=dp_line_alpha, marker='x')
-        legends.append(r'DOPRI54: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\tau}$ =%.0e' %(grid_spacing[j], dp45_error_tol))
+        legends.append('DOPRI54: $\mathregular{h_{grid}}$=%.1e  ' %(grid_spacing[j])) # , $\mathregular{\tau}$ =%.0e   , dp45_error_tol
+
+plt.legend(legends, loc=[0.02,0.81])
 
 
-
+axins = zoomed_inset_axes(ax, 2.5  , loc=1) # zoom = 6
+for j in xrange(len(res)):
+    axins.plot(np.linspace(x0,x1,res[j]),FTLE_list_DP45[j][0],':', alpha=dp_line_alpha, marker='x')
 #
+# sub region of the original image
+X1, X2, Y1, Y2 = 1.063, 1.092, 0.335, 0.575
+axins.set_xlim(X1, X2)
+axins.set_ylim(Y1, Y2)
 
-plt.legend(legends)
-ax.text(0.8,1.02,'y = %r' %y, transform=ax.transAxes)
-ax.text(0.2,1.02,'$\mathregular{t_{0}}$= %r' %(t_0), transform=ax.transAxes)
-ax.text(0.4,1.02,'Resolution = %r' %actual_res, transform=ax.transAxes) # remove later
+plt.xticks(visible=False)
+plt.yticks(visible=False)
+# draw a bbox of the region of the inset axes in the parent axes and
+# connecting lines between the bbox and the inset axes area
+mark_inset(ax, axins, loc1=2, loc2=3, fc="none", ec="0.5")
+
+
+
+# ax.text(0.5,1.02,'y = %r' %y, transform=ax.transAxes)
+# ax.text(0.2,1.02,'$\mathregular{t_{0}}$= %r' %(t_0), transform=ax.transAxes)
+# ax.text(0.4,1.02,'Resolution = %r' %actual_res, transform=ax.transAxes) # remove later
 
 #plt.savefig('testfig23.pdf',transparent=True)
 plt.show()
