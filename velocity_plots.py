@@ -8,8 +8,8 @@ import matplotlib as mpl
 import double_gyre_functions as dg
 
 # Double gyre velocity parameters
-eps = [0.,0.2,0.4,0.6]
-amp = [0.2,0.2,0.2,0.2]
+eps = [0.2,0.2,0.2,0.2]
+amp = [0.1,0.2,0.3,0.4]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
 nx = 20
@@ -42,15 +42,10 @@ fig.text(0.47, 0.04, 'x', ha='center', va='center', fontsize=10)  #A different w
 fig.text(0.06, 0.5, 'y', ha='center', va='center', rotation='vertical',fontsize=10)
 
 
-#ax2.set_xlim([-12,12])
-#ax3.set_xlim([-12,12])
-#ax4.set_xlim([-12,12])
-print np.shape(dg_vel)
-print np.shape(coords)
-# print dg_vel[0][0]-dg_vel[0][1]
+# print np.shape(dg_vel)
+# print np.shape(coords)
+
 scl = 6
-
-
 ax1.quiver(coords[0],coords[1], np.array(dg_vel[0][0]), np.array(dg_vel[0][1]), scale = scl, scale_units = 'inches')
 ax2.quiver(coords[0],coords[1], np.array(dg_vel[1][0]), np.array(dg_vel[1][1]), scale = scl, scale_units = 'inches')
 ax3.quiver(coords[0],coords[1], np.array(dg_vel[2][0]), np.array(dg_vel[2][1]), scale = scl, scale_units = 'inches')
@@ -59,12 +54,9 @@ ax4.quiver(coords[0],coords[1], np.array(dg_vel[3][0]), np.array(dg_vel[3][1]), 
 
 ax1.set_ylim([0,1])
 ax1.set_xlim([0,2])
-ax3.set_xticklabels([0.0,0.5,1.0,1.5,2.0])
+# ax3.set_xticklabels([0.0,0.5,1.0,1.5,2.0])
 ax4.set_ylim([0,1])
 ax4.set_xlim([0,2])
-
-
-
 
 
 
@@ -83,14 +75,14 @@ ax4.axes.autoscale(False)
 # ax2.set_title('$\mathregular{t_0}$ = %d ' %t_0[1],fontsize=10)
 # ax3.set_title('$\mathregular{t_0}$ = %d ' %t_0[2],fontsize=10)
 # ax4.set_title('$\mathregular{t_0}$ = %d ' %t_0[3],fontsize=10)
-# ax1.set_title('$\mathregular{A}$ = %d ' %amp[0],fontsize=10)
-# ax2.set_title('$\mathregular{A}$ = %d ' %amp[1],fontsize=10)
-# ax3.set_title('$\mathregular{A}$ = %d ' %amp[2],fontsize=10)
-# ax4.set_title('$\mathregular{A}$ = %d ' %amp[3],fontsize=10)
-ax1.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[0],fontsize=10)
-ax2.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[1],fontsize=10)
-ax3.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[2],fontsize=10)
-ax4.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[3],fontsize=10)
+ax1.set_title('$\mathregular{A}$ = %d ' %amp[0],fontsize=10)
+ax2.set_title('$\mathregular{A}$ = %d ' %amp[1],fontsize=10)
+ax3.set_title('$\mathregular{A}$ = %d ' %amp[2],fontsize=10)
+ax4.set_title('$\mathregular{A}$ = %d ' %amp[3],fontsize=10)
+# ax1.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[0],fontsize=10)
+# ax2.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[1],fontsize=10)
+# ax3.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[2],fontsize=10)
+# ax4.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[3],fontsize=10)
 
 fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.85, 0.15, 0.03, 0.7])
@@ -106,5 +98,5 @@ cbar.solids.set_rasterized(True)
 
 #
 # ax1.text(-10,9.8,'t = %d $\mu$s' %(t[T]),color='DimGray', fontsize=12)
-plt.savefig('dg_velocity_plot_eps_var_t02_A0-2.pdf', bbox_inches='tight', dpi=1000)
+# plt.savefig('dg_velocity_plot_A_var_t02_eps0-2.pdf', bbox_inches='tight', dpi=1000)
 plt.show()
