@@ -9,12 +9,12 @@ import double_gyre_functions as dg
 
 # Double gyre velocity parameters
 eps = [0.2,0.2,0.2,0.2]
-amp = [0.1,0.2,0.3,0.4]
+amp = [0.3,0.3,0.3,0.3]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
 nx = 20
 ny = 10
-t_0 = [2,2,2,2]
+t_0 = [2,4,6,8]
 dg_vel = []
 dg_vel_high_res = []
 coords = dg.generate_grid(nx,ny)
@@ -71,14 +71,14 @@ ax1.axes.autoscale(False)
 ax2.axes.autoscale(False)
 ax3.axes.autoscale(False)
 ax4.axes.autoscale(False)
-# ax1.set_title('$\mathregular{t_0}$ = %d ' %t_0[0],fontsize=10)
-# ax2.set_title('$\mathregular{t_0}$ = %d ' %t_0[1],fontsize=10)
-# ax3.set_title('$\mathregular{t_0}$ = %d ' %t_0[2],fontsize=10)
-# ax4.set_title('$\mathregular{t_0}$ = %d ' %t_0[3],fontsize=10)
-ax1.set_title('$\mathregular{A}$ = %d ' %amp[0],fontsize=10)
-ax2.set_title('$\mathregular{A}$ = %d ' %amp[1],fontsize=10)
-ax3.set_title('$\mathregular{A}$ = %d ' %amp[2],fontsize=10)
-ax4.set_title('$\mathregular{A}$ = %d ' %amp[3],fontsize=10)
+ax1.set_title('t = %d ' %t_0[0],fontsize=10)
+ax2.set_title('t = %d ' %t_0[1],fontsize=10)
+ax3.set_title('t = %d ' %t_0[2],fontsize=10)
+ax4.set_title('t = %d ' %t_0[3],fontsize=10)
+# ax1.set_title('$\mathregular{A}$ = %.1f ' %amp[0],fontsize=10)
+# ax2.set_title('$\mathregular{A}$ = %.1f ' %amp[1],fontsize=10)
+# ax3.set_title('$\mathregular{A}$ = %.1f ' %amp[2],fontsize=10)
+# ax4.set_title('$\mathregular{A}$ = %.1f ' %amp[3],fontsize=10)
 # ax1.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[0],fontsize=10)
 # ax2.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[1],fontsize=10)
 # ax3.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[2],fontsize=10)
@@ -98,5 +98,5 @@ cbar.solids.set_rasterized(True)
 
 #
 # ax1.text(-10,9.8,'t = %d $\mu$s' %(t[T]),color='DimGray', fontsize=12)
-# plt.savefig('dg_velocity_plot_A_var_t02_eps0-2.pdf', bbox_inches='tight', dpi=1000)
+# plt.savefig('dg_velocity_plot_t_var_A0-3_eps0-2.pdf', bbox_inches='tight', dpi=1000)
 plt.show()
