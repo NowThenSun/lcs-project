@@ -10,8 +10,8 @@ eps = [0.2,0.2,0.2,0.2]
 amp = [0.3,0.3,0.3,0.3]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
-nx = 1000
-ny = 500
+nx = 500
+ny = 250
 aux_grid_spacing = 0.08*2/nx
 t_0 = [2,4,6,8]
 int_time = [10,10,10,10]
@@ -32,7 +32,7 @@ for k in xrange(4):
 
 
 #
-fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row',figsize=(8,6))#
+fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')#
 #
 #
 #
@@ -75,10 +75,11 @@ ax4.set_title('$\mathregular{t_0}$ = %d ' %t_0[3],fontsize=10)
 
 fig.subplots_adjust(right=0.8)
 cbar_ax = fig.add_axes([0.85, 0.15, 0.03, 0.7])
-if np.sign(int_time[0]) == +1:
-    cbar_ax.set_title('f-FTLE',fontsize=10,y=1.02,x=0.6)
-else:
-    cbar_ax.set_title('b-FTLE',fontsize=10,y=1.02,x=0.6)
+# if np.sign(int_time[0]) == +1:
+#     cbar_ax.set_title('f-FTLE',fontsize=10,y=1.02,x=0.6)
+# else:
+#     cbar_ax.set_title('b-FTLE',fontsize=10,y=1.02,x=0.6)
+cbar_ax.set_title('FTLE',fontsize=10,y=1.02,x=0.6)
 
 cbar = fig.colorbar(im,cbar_ax)
 
