@@ -110,7 +110,9 @@ for j in xrange(len(res)):
         ev_max = np.amax(ev,-1)
         ftle = np.log(ev_max)/(2.*np.abs(int_time))
         FTLE_list_DP45.append(ftle)
-        plt.plot(np.linspace(x0,x1,res[j]),ftle[0],':', alpha=dp_line_alpha, marker='x')
+        # marks = ['x','o',None]
+        # ls = [':',':','-']
+        plt.plot(np.linspace(x0,x1,res[j]),ftle[0],[:], alpha=dp_line_alpha, marker='x')
         legends.append('DOPRI54: $\mathregular{h_{grid}}$=%.1e  ' %(grid_spacing[j])) # , $\mathregular{\tau}$ =%.0e   , dp45_error_tol
 
 plt.legend(legends, loc=[0.02,0.81])
