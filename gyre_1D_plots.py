@@ -21,17 +21,17 @@ actual_res = res*2./(x1-x0)     # True resolution on a full [0,2]x[0,1] double g
 grid_spacing = (x1-x0)/res
 
 # double gyre parameters - Note: dg.gyre_global_params's global parameters have dg. in front of them so primarily exist within the dg module (although can still be called upon here with e.g. dg.amplitude_g)
-dg_params = dg.gyre_global_params(amplitude=0.1, epsilon=0.1, omega=2*np.pi/10.)
+dg_params = dg.gyre_global_params(amplitude=0.3, epsilon=0.2, omega=2*np.pi/10.)
 # other parameters
 aux_grid_spacing = 0.08*grid_spacing
-rkf45_error_tol = 1*10**-4
+rkf45_error_tol = 1*10**-3
 dp45_error_tol = rkf45_error_tol
 t_0 = 2.
 int_time = 10.
 dt_min = np.sign(int_time)*1*10**-3
-dt_max = np.sign(int_time)*1.
+dt_max = np.sign(int_time)*0.2
 # dt_fixed = 0.5      # timestep used for RK4 integration
-dt_fixed_array = [np.sign(int_time)*0.5]        # array of timesteps used for RK4 integration
+dt_fixed_array = [np.sign(int_time)*0.2]        # array of timesteps used for RK4 integration
 
 # Bools of which methods are compared
 Truez=False
@@ -52,8 +52,8 @@ ax = plt.axes()
 ax.set_xlabel('x')
 ax.set_ylabel('FTLE')
 legends = []
-line_alpha = 0.66
-dp_line_alpha = 0.7
+line_alpha = 0.6
+dp_line_alpha = 0.6
 
 
 for j in xrange(len(res)):
