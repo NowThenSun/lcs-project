@@ -10,8 +10,8 @@ eps = [0.2,0.2,0.2,0.2]
 amp = [0.3,0.3,0.3,0.3]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
-nx = 500
-ny = 250
+nx = 1000
+ny = 500
 aux_grid_spacing = 0.08*2/nx
 t_0 = [2,4,6,8]
 int_time = [10,10,10,10]
@@ -24,7 +24,7 @@ ftle = []
 for k in xrange(4):
     #Calculate double gyre velocities
 
-    ftle.append(dg.main(amplitude=amp[k], epsilon=eps[k], omega=om,
+    ftle.append(dg.main(amplitude=amp[k], epsilon=eps[k], omega=om[k],
     	nx=nx, ny=ny, aux_grid_spacing=aux_grid_spacing,
     	t_0=t_0[k], int_time=int_time[k], adaptive_error_tol=etol,
     	dt_min=np.sign(int_time[k])*dt_min, dt_max=np.sign(int_time[k])*dt_max, method = 'dp45'))
