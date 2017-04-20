@@ -10,8 +10,8 @@ eps = [0.2,0.2,0.2,0.2]
 amp = [0.3,0.3,0.3,0.3]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
-nx = 1000
-ny = 500
+nx = 500
+ny = 250
 aux_grid_spacing = 0.08*2/nx
 t_0 = [2,4,6,8]
 int_time = [10,10,10,10]
@@ -50,7 +50,7 @@ ax4.set_ylim([0,1])
 ax4.set_xlim([0,2])
 
 vmin = 0
-vmax = 0.7
+vmax = 0.6
 im = ax1.imshow(ftle[0], cmap = cmap, origin = 'lower', extent=(0,2,0,1), vmin=vmin,vmax=vmax,aspect='auto')
 ax2.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(0,2,0,1), vmin=vmin,vmax=vmax,aspect='auto')
 ax3.imshow(ftle[2], cmap = cmap, origin = 'lower', extent=(0,2,0,1), vmin=vmin,vmax=vmax,aspect='auto')
