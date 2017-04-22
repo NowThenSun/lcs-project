@@ -164,13 +164,13 @@ def analytic_velocity_noglobal(epsilon_loc, amplitude_loc, omega_loc, coordinate
 	return u, v  #Note this returns (u,v) as a tuple
 
 
-#
-# ftle = main(amplitude=0.1, epsilon=0.15, omega=2*np.pi/10.,
-# 	nx=200, ny=100, aux_grid_spacing=1.*10**-5,
-# 	t_0=7., int_time=15, adaptive_error_tol=1.*10**-4,
-# 	dt_min=0.01, dt_max=0.8, method = 'dp45')
-#
-#
+nx = 500
+ftle = main(amplitude=0.3, epsilon=0., omega=2*np.pi/10.,
+	nx=nx, ny=nx/2, aux_grid_spacing=0.08*2/nx,
+	t_0=2., int_time=10, adaptive_error_tol=1.*10**-3,
+	dt_min=0.001, dt_max=0.2, method = 'dp45')
+
+
 # import matplotlib.pyplot as plt
 # import matplotlib as mpl
 # # Plotting code for plot of eigenvalues/FTLE field
@@ -206,7 +206,7 @@ def analytic_velocity_noglobal(epsilon_loc, amplitude_loc, omega_loc, coordinate
 #
 #
 # im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(0,2,0,1),
-#     cmap=cubehelix_cmap(g=2.0,s=-1.2,r=-0.85,sat=1.0)[1],vmax=0.51) #,aspect='auto' vmin=-0.0001,vmax=0.0001,
+#     cmap=cubehelix_cmap(g=2.0,s=-1.2,r=-0.85,sat=1.0)[1],vmax=0.5,vmin=0) #,aspect='auto' vmin=-0.0001,vmax=0.0001,
 # #
 # # ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
 # # ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)

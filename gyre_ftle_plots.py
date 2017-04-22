@@ -10,11 +10,15 @@ eps = [0.2,0.2,0.2,0.2]
 amp = [0.1,0.1,0.1,0.1]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
+<<<<<<< HEAD
 nx = 100
+=======
+nx = 50
+>>>>>>> 5640c3f5761a508dce09d72c14619e823b120695
 ny = nx/2
 aux_grid_spacing = 0.08*2/nx
-t_0 = [2,4,6,8]
-int_time = [10,10,10,10]
+t_0 = [0,0,0,0]
+int_time = [5,10,15,20]
 etol = 10**-3
 dt_min = 10**-3
 dt_max = 0.2
@@ -34,10 +38,7 @@ for k in xrange(4):
 #
 fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')#
 #
-#
-#
-# im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(0,2,0,1),
-#     cmap=cubehelix_cmap(g=2.0,s=-1.2,r=-0.85,sat=1.0)[1],vmax=0.51) #,aspect='auto' vmin=-0.0001,vmax=0.0001,
+
 cmap = cubehelix_cmap(g=2.0,s=-1.2,r=-0.85,sat=1.0)[1]
 
 fig.text(0.47, 0.04, 'x', ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
@@ -48,9 +49,13 @@ ax1.set_xlim([0,2])
 # ax3.set_xticklabels([0.0,0.5,1.0,1.5,2.0])
 ax4.set_ylim([0,1])
 ax4.set_xlim([0,2])
+ax3.set_ylim([0,1])
+ax3.set_xlim([0,2])
+ax2.set_ylim([0,1])
+ax2.set_xlim([0,2])
 
 vmin = 0
-vmax = 0.7
+vmax = 0.5
 im = ax1.imshow(ftle[0], cmap = cmap, origin = 'lower', extent=(0,2,0,1), vmin=vmin,vmax=vmax,aspect='auto')
 ax2.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(0,2,0,1), vmin=vmin,vmax=vmax,aspect='auto')
 ax3.imshow(ftle[2], cmap = cmap, origin = 'lower', extent=(0,2,0,1), vmin=vmin,vmax=vmax,aspect='auto')
@@ -60,14 +65,14 @@ ax1.axes.autoscale(False)
 ax2.axes.autoscale(False)
 ax3.axes.autoscale(False)
 ax4.axes.autoscale(False)
-ax1.set_title('$\mathregular{t_0}$ = %d ' %t_0[0],fontsize=10)
-ax2.set_title('$\mathregular{t_0}$ = %d ' %t_0[1],fontsize=10)
-ax3.set_title('$\mathregular{t_0}$ = %d ' %t_0[2],fontsize=10)
-ax4.set_title('$\mathregular{t_0}$ = %d ' %t_0[3],fontsize=10)
-# ax1.set_title('$\mathregular{A}$ = %.1f ' %amp[0],fontsize=10)
-# ax2.set_title('$\mathregular{A}$ = %.1f ' %amp[1],fontsize=10)
-# ax3.set_title('$\mathregular{A}$ = %.1f ' %amp[2],fontsize=10)
-# ax4.set_title('$\mathregular{A}$ = %.1f ' %amp[3],fontsize=10)
+# ax1.set_title('$\mathregular{t_0}$ = %d ' %t_0[0],fontsize=10)
+# ax2.set_title('$\mathregular{t_0}$ = %d ' %t_0[1],fontsize=10)
+# ax3.set_title('$\mathregular{t_0}$ = %d ' %t_0[2],fontsize=10)
+# ax4.set_title('$\mathregular{t_0}$ = %d ' %t_0[3],fontsize=10)
+ax1.set_title('$\mathregular{T}$ = %d ' %int_time[0],fontsize=10)
+ax2.set_title('$\mathregular{T}$ = %d ' %int_time[1],fontsize=10)
+ax3.set_title('$\mathregular{T}$ = %d ' %int_time[2],fontsize=10)
+ax4.set_title('$\mathregular{T}$ = %d ' %int_time[3],fontsize=10)
 # ax1.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[0],fontsize=10)
 # ax2.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[1],fontsize=10)
 # ax3.set_title('$\mathregular{\epsilon}$ = %.1f ' %eps[2],fontsize=10)
@@ -92,5 +97,5 @@ cbar = fig.colorbar(im,cbar_ax)
 
 #
 # ax1.text(-10,9.8,'t = %d $\mu$s' %(t[T]),color='DimGray', fontsize=12)
-plt.savefig('dg_ftle_plot_t_var_A0-3_eps0-2_T10.pdf', bbox_inches='tight')
+plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
 plt.show()
