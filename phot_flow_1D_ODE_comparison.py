@@ -92,7 +92,7 @@ for j in xrange(len(res)):
             # FTLE_list_RK4.append(ftle)
 
             plt.plot(np.linspace(x0,x1,res[j]),ftle[0],'-', alpha=line_alpha)
-            legends.append('RK4 nx%i dt = %.2f' %(actual_res[j], dt_fixed_array[k]))
+            legends.append(r'RK4: $\mathregular{h_\mathrm{grid}}$=%d  , $\mathregular{\Delta t}$ = %.1f' %(grid_spacing[j], dt_fixed_array[k]))
 
     if RKF45 == True:
         # Use rkf45 integration scheme
@@ -109,7 +109,7 @@ for j in xrange(len(res)):
         # Append FTLE data to FTLE_list
         FTLE_list_RKF45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),FTLE_list_RKF45[j][0],'--', alpha=line_alpha)
-        legends.append('RKF45 nx%i etol = %r' %(actual_res[j], rkf45_error_tol))
+        legends.append(r'RKF45: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\tau}$ =%.0e' %(grid_spacing[j], rkf45_error_tol))
 
     if DP45 == True:
         #DP45 scheme
@@ -125,7 +125,7 @@ for j in xrange(len(res)):
         ftle = np.log(ev_max)/(2.*np.abs(int_time))
         FTLE_list_DP45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),FTLE_list_DP45[j][0],':', alpha=dp_line_alpha, marker='x')
-        legends.append('DOPRI54 nx%i etol = %s' %(actual_res[j], dp45_error_tol))
+        legends.append(r'DOPRI54: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\tau}$ =%.0e ' %(grid_spacing[j] , dp45_error_tol))
 
 
 
