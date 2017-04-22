@@ -9,7 +9,7 @@ import double_gyre_functions as dg
 
 # Double gyre velocity parameters
 eps = [0.2,0.2,0.2,0.2]
-amp = [0.3,0.3,0.3,0.3]
+amp = [0.1,0.1,0.1,0.1]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
 nx = 20

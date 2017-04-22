@@ -7,11 +7,11 @@ from plotting_code import cubehelix_cmap
 
 # Double gyre velocity parameters
 eps = [0.2,0.2,0.2,0.2]
-amp = [0.3,0.3,0.3,0.3]
+amp = [0.1,0.1,0.1,0.1]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
-nx = 1000
-ny = 500
+nx = 100
+ny = nx/2
 aux_grid_spacing = 0.08*2/nx
 t_0 = [2,4,6,8]
 int_time = [10,10,10,10]
