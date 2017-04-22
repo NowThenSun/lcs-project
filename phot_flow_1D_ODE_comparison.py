@@ -109,7 +109,7 @@ for j in xrange(len(res)):
         # Append FTLE data to FTLE_list
         FTLE_list_RKF45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),FTLE_list_RKF45[j][0],'--', alpha=line_alpha)
-        legends.append(r'RKF45: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\tau}$ =%.0e' %(grid_spacing[j], rkf45_error_tol))
+        legends.append(r'RKF45: $\mathregular{h_{grid}}$=%d  , $\mathregular{\tau}$ =%.0e' %(grid_spacing[j], rkf45_error_tol))
 
     if DP45 == True:
         #DP45 scheme
@@ -125,7 +125,7 @@ for j in xrange(len(res)):
         ftle = np.log(ev_max)/(2.*np.abs(int_time))
         FTLE_list_DP45.append(ftle)
         plt.plot(np.linspace(x0,x1,res[j]),FTLE_list_DP45[j][0],':', alpha=dp_line_alpha, marker='x')
-        legends.append(r'DOPRI54: $\mathregular{h_{grid}}$=%.1e  , $\mathregular{\tau}$ =%.0e ' %(grid_spacing[j] , dp45_error_tol))
+        legends.append(r'DOPRI54: $\mathregular{h_{grid}}$=%d  , $\mathregular{\tau}$ =%.0e ' %(grid_spacing[j] , dp45_error_tol))
 
 
 
