@@ -132,7 +132,7 @@ for j in xrange(len(res)):
 #
 plt.legend(legends)
 ax.text(0.8,1.02,'y = %r %s' %(y,lenunits), transform=ax.transAxes)
-ax.text(0.0,1.02,'t_0= %s' %time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime((t_0 + REF_TIME))), transform=ax.transAxes)
+ax.text(0.0,1.02,'t_0= %s' %time.strftime('%d-%b-%Y %H:%M UT', time.gmtime((t_0 + REF_TIME))), transform=ax.transAxes)
 ax.text(0.55,1.02, 'T = %+.1f hrs' %(int_time/3600.) , transform=ax.transAxes)
 #plt.savefig('testfig23.pdf',transparent=True)
 plt.show()

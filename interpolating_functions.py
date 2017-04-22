@@ -36,25 +36,27 @@ def regular_grid_interpolator_fn(U, V, X, Y, TIME):
         Interpolated velocity at coordinates and current_time inputted
         '''
         #t_repeat = np.repeat(current_time, 4, axis=-1) #grid repeated to 1*ny*nx*4 shape for broadcasting
-        t_repeat = np.zeros((1,np.shape(coords)[1],np.shape(coords)[2],4))+current_time
+        t_repeat = np.zeros((1,np.shape(coords)[1],np.shape(coords)[2]))+current_time
         #print np.shape(t_repeat)
-        mesh_coords = np.concatenate((t_repeat,coords)) # 3*ny*nx*n4 shape now (T,X,Y) indexing  (but X = Y here - so doesn't matter)
+        mesh_coords = np.concatenate((t_repeat,coords)) # 3*ny*nx shape now (T,X,Y) indexing  (but X = Y here - so doesn't matter)
         mesh_coords1 = mesh_coords[::-1] # Flips to (Y,X,T) indexing
         mesh_coords2 = np.roll(mesh_coords1, 1, axis=0) #Rolls to (T,Y,X) indexing
         #Need to meshgrid coordinates into a N*3 form to input into regulargridinterpolator
-        mc3 = np.swapaxes(mesh_coords2 , 0, -1)  #4*ny*nx*3
-        shape = np.prod(np.shape(coords))/2
-        mc4 = np.reshape(mc3, (shape,3)) #(4*ny*nx)*3
+        mc3 = np.rollaxis(mesh_coords2,0,3)  #ny*nx*3
+        # print np.shape(coords)
+        # print np.shape(mc3)
+        shape = np.int(np.prod(np.shape(coords))/2)
+        # print shape
+        mc4 = np.reshape(mc3, (shape,3)) #(ny*nx)*3
         # New attempt at mesh coords
 
 
         #print np.shape(time)
         Uint = RegularGridInterpolator((TIME,Y,X),U,bounds_error=bound_interpolation,fill_value=None)
         Vint = RegularGridInterpolator((TIME,Y,X),V,bounds_error=bound_interpolation,fill_value=None)  #fill_value = None extrapolates
-        U1 = Uint(mc4).reshape(4,np.shape(coords)[1],np.shape(coords)[2])  #insert N*3 return N shaped arrays
-        V1 = Vint(mc4).reshape(4,np.shape(coords)[1],np.shape(coords)[2])
-        #print U1
-        return np.rollaxis(U1,0,3),np.rollaxis(V1,0,3)
+        U1 = Uint(mc4).reshape(np.shape(coords)[1],np.shape(coords)[2])  #insert N*3 return N shaped arrays
+        V1 = Vint(mc4).reshape(np.shape(coords)[1],np.shape(coords)[2])
+        return U1, V1
 
     def regular_grid_interpolator_array_t(coords, current_time, bound_interpolation = False):
         '''
