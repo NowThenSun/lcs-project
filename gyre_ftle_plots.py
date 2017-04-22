@@ -10,11 +10,7 @@ eps = [0.2,0.2,0.2,0.2]
 amp = [0.1,0.1,0.1,0.1]
 period = np.array([10,10,10,10])
 om = 2.*np.pi/period
-<<<<<<< HEAD
 nx = 100
-=======
-nx = 50
->>>>>>> 5640c3f5761a508dce09d72c14619e823b120695
 ny = nx/2
 aux_grid_spacing = 0.08*2/nx
 t_0 = [0,0,0,0]

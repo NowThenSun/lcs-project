@@ -31,7 +31,7 @@ def plot_phot(int_time, t_0 = TIME[0]):
     # t_0 = TIME[0]                  # Initial time
     # int_time  = 400 # in seconds (21600s = 6 hrs)
     dt_min = np.sign(int_time)*10
-    dt_max = np.sign(int_time)*250
+    dt_max = np.sign(int_time)*100
     etol = 0.01
 
     grid_lim_step = 2
@@ -68,10 +68,10 @@ def plot_phot(int_time, t_0 = TIME[0]):
     # Google drive path
     plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/nx%r_t0rel%.1f_T%r_etol%r_dp45.png" %(nx,t_0-TIME[0],int_time,etol)
     plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0-TIME[0], adap_error_tol=0, colour_range=(-0.0001,0.0001), save_name = plot_name,g=1,s=0.8,r=1.2,sat=1)
+    
 
-
-int_times_array = [-14400]#np.arange(3600,7200,600)
-t_0_array = [TIME[-1],TIME[-50]]
+int_times_array = [-14400*3]#np.arange(3600,7200,600)
+t_0_array = [TIME[-1]]
 # t_0_array += TIME[0]
 for k in xrange(len(t_0_array)):
     print "Relative starting time for FTLE calculation", t_0_array[k] - TIME[0]

@@ -163,14 +163,14 @@ def analytic_velocity_noglobal(epsilon_loc, amplitude_loc, omega_loc, coordinate
 	v = np.pi*amplitude_loc*np.cos(np.pi*f)*np.sin(np.pi*coordinates[1])*df
 	return u, v  #Note this returns (u,v) as a tuple
 
-
-nx = 500
-ftle = main(amplitude=0.3, epsilon=0., omega=2*np.pi/10.,
-	nx=nx, ny=nx/2, aux_grid_spacing=0.08*2/nx,
-	t_0=2., int_time=10, adaptive_error_tol=1.*10**-3,
-	dt_min=0.001, dt_max=0.2, method = 'dp45')
-
-
+#
+# nx = 500
+# ftle = main(amplitude=0.3, epsilon=0.2, omega=2*np.pi/10.,
+# 	nx=nx, ny=nx/2, aux_grid_spacing=0.08*2/nx,
+# 	t_0=2., int_time=100, adaptive_error_tol=1.*10**-3,
+# 	dt_min=0.001, dt_max=0.2, method = 'dp45')
+# 
+#
 # import matplotlib.pyplot as plt
 # import matplotlib as mpl
 # # Plotting code for plot of eigenvalues/FTLE field

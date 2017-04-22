@@ -29,9 +29,9 @@ print time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime(INIT_TIME))
 REF_TIME = INIT_TIME - TIME[0]
 #~~~~~ 1D PLOTTING PARAMETERS ~~~~~
 y = 2000                                # fixed y-value the FTLE is evaluated at
-x0 = X[0]                                  # initial x value
-x1 = 5500                                # final x value
-res = np.array([200,1000]) # Resolutions tested at (number of grid points between x0 and x1)               0.2/100 ~ 1000x500 res
+x0 = X[0]+2000                                 # initial x value
+x1 = 4000                                # final x value
+res = np.array([50,100,200]) # Resolutions tested at (number of grid points between x0 and x1)               0.2/100 ~ 1000x500 res
 grid_spacing = (x1-x0)/res
 #True resolution calculation
 # Main parameter (need to make sure this matches with grid_lim_step used in data calculation)
@@ -41,20 +41,20 @@ actual_res = (X_max-X_min)*res/(x1-x0)
 
 # other parameters
 aux_grid_spacing = grid_spacing*0.08
-rkf45_error_tol = 1*10**-2
+rkf45_error_tol = 1*10**-1
 dp45_error_tol = rkf45_error_tol
 t_0 = TIME[-1]
-int_time = -14400
-dt_min = np.sign(int_time)*10
-dt_max = np.sign(int_time)*200
+int_time = -14400*3
+dt_min = np.sign(int_time)*1
+dt_max = np.sign(int_time)*100
 # dt_fixed = np.sign(int_time)*50      # timestep used for RK4 integration
-dt_fixed_array = [-200]        # array of timesteps used for RK4 integration
+dt_fixed_array = [-100]        # array of timesteps used for RK4 integration
 
 
 # Bools of which methods are compared
 Truez=False
 RK4 = True
-RKF45 = True
+RKF45 = Truez
 DP45 = True
 no_methods = [RK4,RKF45,DP45].count(True)
 #list to put in final data of calculated FTLE fields
@@ -68,7 +68,7 @@ ax.set_xlabel('x (%s)' %lenunits)
 ax.set_ylabel('FTLE')
 legends = []
 line_alpha = 0.66
-dp_line_alpha = 1.
+dp_line_alpha = 0.7
 
 for j in xrange(len(res)):
     print "Grid spacing =", grid_spacing[j]
@@ -135,4 +135,5 @@ ax.text(0.8,1.02,'y = %r %s' %(y,lenunits), transform=ax.transAxes)
 ax.text(0.0,1.02,'t_0= %s' %time.strftime('%d-%b-%Y %H:%M UT', time.gmtime((t_0 + REF_TIME))), transform=ax.transAxes)
 ax.text(0.55,1.02, 'T = %+.1f hrs' %(int_time/3600.) , transform=ax.transAxes)
 #plt.savefig('testfig23.pdf',transparent=True)
+print actual_res
 plt.show()
