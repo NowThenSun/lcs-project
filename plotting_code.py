@@ -36,33 +36,62 @@ def cubehelix_cmap(g=1.0, s=0.5, r = -1.5, sat = 1.0):
     return cmap, cmap_r
 
 
-def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time, t_0, adap_error_tol, colour_range =(0,0), save_name=False,g=1.0,s=-1.2,r=-0.85,sat=1.0):
+def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time=0, t_0=0, adap_error_tol=0, colour_range =(0,0), colour_rescale = 0,
+    save_name=False,g=1.0,s=-1.2,r=-0.85,sat=1.0, lenunits = False, label1=0, label2=0):
     '''
     Function that plots a colourmap of the FTLE field
     '''
     fig = plt.figure()
     ax = plt.axes()
+
+
+    fig.subplots_adjust(right=0.97)
+    cbar_ax = fig.add_axes([0.9, 0.15, 0.03, 0.7])
+
     if colour_range == (0,0):
         # Automatic colour bar range
         im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
             cmap=cubehelix_cmap(g,s,r,sat)[1])
-    else:
-        im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
-            cmap=cubehelix_cmap(g,s,r,sat)[1],
-            vmin=colour_range[0],vmax=colour_range[1]) #,aspect='auto'
+        cb = fig.colorbar(im, cax=cbar_ax,format='%.1e')
 
-    ax.text(0.8,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
-    ax.text(-0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
+    else:
+        if not colour_rescale == 0:
+            im = ax.imshow(ftle/colour_rescale, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
+                cmap=cubehelix_cmap(g,s,r,sat)[1],
+                vmin=colour_range[0]/colour_rescale,vmax=colour_range[1]/colour_rescale) #,aspect='auto'
+            cb = fig.colorbar(im, cax=cbar_ax,format='%.1e')
+        else:
+            im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
+                cmap=cubehelix_cmap(g,s,r,sat)[1],
+                vmin=colour_range[0],vmax=colour_range[1]) #,aspect='auto'
+            cb = fig.colorbar(im, cax=cbar_ax,format='%.1e')
+
+    if not t_0 == 0:
+        ax.text(0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)
+
+    if not int_time == 0:
+        ax.text(0.7,1.02,'T = %.1f' %int_time, transform=ax.transAxes)
     #ax.text(0.3,1.02,'average dt = %.2e' %np.average(dt), transform=ax.transAxes)
+
+    if not label1 == 0:
+        ax.text(0.1,1.02,label1, transform=ax.transAxes)
+
+    if not label2 == 0:
+        ax.text(0.7,1.02,label2, transform=ax.transAxes)
 
     if not adap_error_tol == 0:
         ax.text(0.3,1.02,'error tol in dt= %r' %adap_error_tol, transform=ax.transAxes)
-    cbar_ax = fig.add_axes([0.855, 0.15, 0.025, 0.75])
-    #cbar_ax.set_title('title',fontsize=11,y=1.02,x=1.005)
+
+
+    # cbar_ax = fig.add_axes([0.855, 0.15, 0.025, 0.75])
     #ax1.text(0.8,0.9,r'$t$ = %d $\mu$s' %t[T],fontsize=13,transform=ax1.transAxes, color='Azure')
-    ax.set_xlabel('x')
-    ax.set_ylabel('y')
-    cb = fig.colorbar(im, cax=cbar_ax)
+    if lenunits == False:
+        ax.set_xlabel('x')
+        ax.set_ylabel('y')
+    else:
+        ax.set_xlabel('x (%s)' %lenunits)
+        ax.set_ylabel('y (%s)' %lenunits)
+
     if save_name == False:
         plt.show()
     else:
