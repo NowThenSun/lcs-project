@@ -29,13 +29,13 @@ fh.close()
 
 def plot_phot(int_time, t_0 = TIME[0],g=1,s=0.7,r=1.2,sat=1):
     #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-    nx = 100
-    ny = 100
+    nx = 400
+    ny = nx
     # t_0 = TIME[0]                  # Initial time
     # int_time  = 400 # in seconds (21600s = 6 hrs)
-    dt_min = np.sign(int_time)*10
-    dt_max = np.sign(int_time)*200
-    etol = 0.01
+    dt_min = np.sign(int_time)*1
+    dt_max = np.sign(int_time)*100
+    etol = 0.1
     # ~~~~~~~~~~~~~~  SETUP UNITS ~~~~~~~~~~~~~~
     lenunits = 'km' #units of distance for axis labels
     INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 2006 (initial time of magnetograms)
@@ -79,12 +79,14 @@ def plot_phot(int_time, t_0 = TIME[0],g=1,s=0.7,r=1.2,sat=1):
         colour_range=(-0.0001,0.0001),colour_rescale=0, save_name = plot_name,g=g,s=s,r=r,sat=sat, lenunits=lenunits, label1 = time.strftime('%d-%b-%Y %H:%M UT', time.gmtime((t_0 + REF_TIME))),label2 = time_label)
 
 
-int_times_array = [-1800]#np.arange(3600,7200,600)
-t_0_array = [TIME[-1]]
+int_times_hrs = [4]
+int_times_array = np.array(int_times_hrs)*3600
+t_0_array = [TIME[-1]-6*3600]
 # t_0_array += TIME[0]
 for k in xrange(len(t_0_array)):
     print "Relative starting time for FTLE calculation", t_0_array[k] - TIME[0]
-    plot_phot(int_time = int_times_array[0], t_0=t_0_array[k],g=1,s=0.9,r=1.2,sat=1)
+    for j in xrange(len(int_times_array)):
+        plot_phot(int_time = int_times_array[j], t_0=t_0_array[k],g=1,s=-0.9,r=0.9,sat=1)
 
 # ,g=1,s=0.7,r=1.2,sat=1  #green backwards
 # ,g=1,s=-0.9,r=0.9,sat=1 # blue purple forwards
