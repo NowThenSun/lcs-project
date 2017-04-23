@@ -26,15 +26,15 @@ TIME = fh.variables['TIME'][:]
 fh.close()
 def plot_phot(int_time, t_0 = TIME[0]):
     #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-    nx = 200
-    ny = 200
+    nx = 400
+    ny = 400
     # t_0 = TIME[0]                  # Initial time
     # int_time  = 400 # in seconds (21600s = 6 hrs)
     dt_min = np.sign(int_time)*10
-    dt_max = np.sign(int_time)*100
+    dt_max = np.sign(int_time)*200
     etol = 0.01
 
-    grid_lim_step = 2
+    grid_lim_step = 4
     X_min,X_max, Y_min, Y_max = (X[grid_lim_step],X[-grid_lim_step-1],Y[grid_lim_step],Y[-grid_lim_step-1])  # Limit initial grid size
     aux_grid_spacing = ((X_max-X_min)/nx)*0.08
     # Compute nx*ny grid of coordinates
@@ -68,7 +68,7 @@ def plot_phot(int_time, t_0 = TIME[0]):
     # Google drive path
     plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/nx%r_t0rel%.1f_T%r_etol%r_dp45.png" %(nx,t_0-TIME[0],int_time,etol)
     plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0-TIME[0], adap_error_tol=0, colour_range=(-0.0001,0.0001), save_name = plot_name,g=1,s=0.8,r=1.2,sat=1)
-    
+
 
 int_times_array = [-14400*3]#np.arange(3600,7200,600)
 t_0_array = [TIME[-1]]
