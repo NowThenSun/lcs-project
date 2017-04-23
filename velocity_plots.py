@@ -33,9 +33,9 @@ ny = 50
 nx_dense = 200
 ny_dense = 200
 
-t_hrs = [1.5-1/60.,1.5,1.5+1/60.,1.5+2/60.]
-t_hrs = -1*np.array(t_hrs)
-t = t_hrs*60*60 + TIME[-1]
+t_hrs = [0, 12, 6, 7]
+t_hrs = np.array(t_hrs)
+t = t_hrs*60*60 + TIME[0]
 
 grid_lim_step = 0
 X_min,X_max, Y_min, Y_max = (X[grid_lim_step],X[-grid_lim_step-1],Y[grid_lim_step],Y[-grid_lim_step-1])  # Limit initial grid size

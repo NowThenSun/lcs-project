@@ -118,7 +118,7 @@ def ftle_phot(nx,ny,int_time,t_0):
     return ftle, X_min, X_max, Y_min, Y_max, time_label
 
 def subplot1x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=0, lenunits=False, colour_range=0,
-    g=1,s=0.5,r=0.5,sat=1):
+    g=1,s=0.5,r=0.5,sat=1, vel_overlay =0):
     fig, (ax1, ax2) = plt.subplots(1, 2, sharey='row')#
     #
     cmap = cubehelix_cmap(g=g,s=s,r=r,sat=sat)[1]
@@ -151,12 +151,17 @@ def subplot1x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
         ax1.set_title(subplot_labels[0],fontsize=10)
         ax2.set_title(subplot_labels[1],fontsize=10)
 
+    if not vel_overlay == 0:
+        scl = 6
+        ax1.quiver(vel_overlay[0][0],vel_overlay[0][1],np.array(vel_overlay[1][0]),np.array(vel_overlay[1][1]), scale = scl, scale_units = 'inches')
+        ax2.quiver(vel_overlay[0][0],vel_overlay[0][1],np.array(vel_overlay[1][0]),np.array(vel_overlay[1][1]), scale = scl, scale_units = 'inches')
+
     fig.subplots_adjust(right=0.8)
     cbar_ax = fig.add_axes([0.85, 0.25, 0.03, 0.5])
     cbar_ax.set_title(r'FTLE (s$^{-1}$)',fontsize=10,y=1.02,x=0.6)
     cbar = fig.colorbar(im,cbar_ax,format='%.1e')
 
-    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_fwd_ftle_subplot_comparison.pdf",bbox_inches='tight')
+    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_bwd_ftle_subplot_comparison_vel_overlay.pdf",bbox_inches='tight')
     # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
     plt.show()
 
@@ -167,13 +172,23 @@ INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 
 REF_TIME = INIT_TIME - TIME[0]
 
 t0 = TIME[0]+6*3600
-int_time=[4*3600,6*3600]
-nx_res = 400
+int_time=[-4*3600,-6*3600]
+nx_res = 100
 ftle_1 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[0], t_0 = t0)
 ftle_2 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[1], t_0 = t0)
+
+vnx = 50
+vny = 50
+grid_lim_step = 4
+X_min2,X_max2, Y_min2, Y_max2 = (X[grid_lim_step],X[-grid_lim_step-1],Y[grid_lim_step],Y[-grid_lim_step-1])  # Limit initial grid size
+# Compute nx*ny grid of coordinates
+xx = np.linspace(X_min2,X_max2, vnx)
+yy = np.linspace(Y_min2,Y_max2, vny)
+vel_coord_grid  = np.array(np.meshgrid(xx,yy,indexing='xy'))
+velocity = interp.regular_grid_interpolator_fn(U, V, X, Y, TIME)[0](vel_coord_grid, t0)
 # print a[1:-1]
 subplot1x2_phot((ftle_1[0],ftle_2[0]),*ftle_1[1:-1], main_label=time.strftime('%d-%b-%Y %H:%M UT', time.gmtime(t0+REF_TIME)),
-    subplot_labels=(ftle_1[-1],ftle_2[-1]),lenunits=lenunits, colour_range=(-0.0001,0.0001),g=1,s=-0.9,r=0.9,sat=1)
+    subplot_labels=(ftle_1[-1],ftle_2[-1]),lenunits=lenunits, colour_range=(-0.0001,0.0001),g=1,s=0.7,r=1.2,sat=1,vel_overlay =(vel_coord_grid,velocity))
 #
 # int_times_hrs = [-12]
 # int_times_array = np.array(int_times_hrs)*3600
