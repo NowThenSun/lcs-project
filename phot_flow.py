@@ -35,7 +35,7 @@ def plot_phot(int_time, t_0 = TIME[0],g=1,s=0.7,r=1.2,sat=1):
     # t_0 = TIME[0]                  # Initial time
     # int_time  = 400 # in seconds (21600s = 6 hrs)
     dt_min = np.sign(int_time)*1
-    dt_max = np.sign(int_time)*100
+    dt_max = np.sign(int_time)*200
     etol = 0.1
     # ~~~~~~~~~~~~~~  SETUP UNITS ~~~~~~~~~~~~~~
     lenunits = 'km' #units of distance for axis labels
@@ -144,7 +144,8 @@ def subplot1x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
         fig.text(0.47, 0.23, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
         fig.text(0.04, 0.5, 'y (%s)' %lenunits, ha='center', va='center', rotation='vertical',fontsize=10)
 
-    fig.text(0.47, 0.77, main_label, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+    if not main_label == 0:
+        fig.text(0.47, 0.77, main_label, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
 
     if not subplot_labels == 0:
         ax1.set_title(subplot_labels[0],fontsize=10)
@@ -155,7 +156,7 @@ def subplot1x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
     cbar_ax.set_title(r'FTLE (s$^{-1}$)',fontsize=10,y=1.02,x=0.6)
     cbar = fig.colorbar(im,cbar_ax,format='%.1e')
 
-    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_bwd_ftle_subplot_comparison.pdf",bbox_inches='tight')
+    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_fwd_ftle_subplot_comparison.pdf",bbox_inches='tight')
     # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
     plt.show()
 
@@ -166,22 +167,22 @@ INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 
 REF_TIME = INIT_TIME - TIME[0]
 
 t0 = TIME[0]+6*3600
-int_time=[-4*3600,-6*3600]
+int_time=[4*3600,6*3600]
 nx_res = 400
 ftle_1 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[0], t_0 = t0)
 ftle_2 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[1], t_0 = t0)
 # print a[1:-1]
-subplot1x2_phot((ftle_1[0],ftle_2[0]),*ftle_1[1:-1], main_label=time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime(t0+REF_TIME)),
-    subplot_labels=(ftle_1[-1],ftle_2[-1]),lenunits=lenunits, colour_range=(-0.0001,0.0001),g=1,s=0.7,r=1.2,sat=1)
+subplot1x2_phot((ftle_1[0],ftle_2[0]),*ftle_1[1:-1], main_label=time.strftime('%d-%b-%Y %H:%M UT', time.gmtime(t0+REF_TIME)),
+    subplot_labels=(ftle_1[-1],ftle_2[-1]),lenunits=lenunits, colour_range=(-0.0001,0.0001),g=1,s=-0.9,r=0.9,sat=1)
 #
-# int_times_hrs = [4]
+# int_times_hrs = [-12]
 # int_times_array = np.array(int_times_hrs)*3600
-# t_0_array = [TIME[-1]-6*3600]
+# t_0_array = [TIME[0]+12*3600]
 # # t_0_array += TIME[0]
 # for k in xrange(len(t_0_array)):
 #     print "Relative starting time for FTLE calculation", t_0_array[k] - TIME[0]
 #     for j in xrange(len(int_times_array)):
-#         plot_phot(int_time = int_times_array[j], t_0=t_0_array[k],g=1,s=-0.9,r=0.9,sat=1)
+#         plot_phot(int_time = int_times_array[j], t_0=t_0_array[k],g=1,s=0.7,r=1.2,sat=1)
 
 # ,g=1,s=0.7,r=1.2,sat=1  #green backwards
 # ,g=1,s=-0.9,r=0.9,sat=1 # blue purple forwards
