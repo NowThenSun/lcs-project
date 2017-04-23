@@ -84,4 +84,7 @@ t_0_array = [TIME[-1]]
 # t_0_array += TIME[0]
 for k in xrange(len(t_0_array)):
     print "Relative starting time for FTLE calculation", t_0_array[k] - TIME[0]
-    plot_phot(int_time = int_times_array[0], t_0=t_0_array[k],g=1,s=-0.9,r=0.9,sat=1)
+    plot_phot(int_time = int_times_array[0], t_0=t_0_array[k],g=1,s=0.9,r=1.2,sat=1)
+
+# ,g=1,s=0.7,r=1.2,sat=1  #green backwards
+# ,g=1,s=-0.9,r=0.9,sat=1 # blue purple forwards
