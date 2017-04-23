@@ -75,7 +75,7 @@ def plot_phot(int_time, t_0 = TIME[0],g=1,s=0.7,r=1.2,sat=1):
     # Plotting code for plot of eigenvalues/FTLE field
     #labtop path
     # Google drive path
-    plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/nx%r_t0rel%.1f_T%r_etol%r_dp45.png" %(nx,t_0-TIME[0],int_time,etol)
+    plot_name = "C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/nx%r_t0rel%.1f_T%r_etol%r_dp45.pdf" %(nx,t_0-TIME[0],int_time,etol)
     plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time=0, t_0=0, adap_error_tol=0,
         colour_range=(-0.0001,0.0001),colour_rescale=0, save_name = plot_name,g=g,s=s,r=r,sat=sat, lenunits=lenunits, label1 = time.strftime('%d-%b-%Y %H:%M UT', time.gmtime((t_0 + REF_TIME))),label2 = time_label)
 
@@ -155,7 +155,7 @@ def subplot1x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
     cbar_ax.set_title(r'FTLE (s$^{-1}$)',fontsize=10,y=1.02,x=0.6)
     cbar = fig.colorbar(im,cbar_ax,format='%.1e')
 
-    plt.savefig("phot_bwd_ftle_subplot_comparison.pdf",bbox_inches='tight')
+    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_bwd_ftle_subplot_comparison.pdf",bbox_inches='tight')
     # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
     plt.show()
 
@@ -167,8 +167,9 @@ REF_TIME = INIT_TIME - TIME[0]
 
 t0 = TIME[0]+6*3600
 int_time=[-4*3600,-6*3600]
-ftle_1 = ftle_phot(nx=400,ny=400,int_time=int_time[0], t_0 = t0)
-ftle_2 = ftle_phot(nx=400,ny=400,int_time=int_time[1], t_0 = t0)
+nx_res = 400
+ftle_1 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[0], t_0 = t0)
+ftle_2 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[1], t_0 = t0)
 # print a[1:-1]
 subplot1x2_phot((ftle_1[0],ftle_2[0]),*ftle_1[1:-1], main_label=time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime(t0+REF_TIME)),
     subplot_labels=(ftle_1[-1],ftle_2[-1]),lenunits=lenunits, colour_range=(-0.0001,0.0001),g=1,s=0.7,r=1.2,sat=1)
