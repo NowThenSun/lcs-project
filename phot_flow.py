@@ -165,6 +165,54 @@ def subplot1x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
     # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
     plt.show()
 
+
+def subplot1x2_phot_alt(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=0, lenunits=False, colour_range=0,
+    g=1,s=0.5,r=0.5,sat=1, vel_overlay =0):
+    fig, (ax1, ax2) = plt.subplots(1, 2, sharey='row')#
+    #
+    cmap = cubehelix_cmap(g=g,s=s,r=r,sat=sat)[1]
+    ax1.set(adjustable='box-forced')
+    ax2.set(adjustable='box-forced')
+    ax1.set_ylim([Y_min,Y_max])
+    ax1.set_xlim([X_min,X_max])
+    ax2.set_ylim([Y_min,Y_max])
+    ax2.set_xlim([X_min,X_max])
+
+    vmin = colour_range[0]
+    vmax = colour_range[1]
+    im = ax1.imshow(ftle[0], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax)
+    ax2.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax)
+    #
+    ax1.axes.autoscale(True)
+    ax2.axes.autoscale(True)
+
+    if lenunits == False:
+        fig.text(0.47, 0.05, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+        fig.text(0.05, 0.5, 'y (%s)' %lenunits, ha='center', va='center', rotation='vertical',fontsize=10)
+    else:
+        fig.text(0.47, 0.23, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+        fig.text(0.04, 0.5, 'y (%s)' %lenunits, ha='center', va='center', rotation='vertical',fontsize=10)
+
+    if not main_label == 0:
+        fig.text(0.47, 0.77, main_label, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+
+    if not subplot_labels == 0:
+        ax1.set_title(subplot_labels[0],fontsize=10)
+        ax2.set_title(subplot_labels[1],fontsize=10)
+
+    if not vel_overlay == 0:
+        scl = 6
+        ax2.quiver(vel_overlay[0][0],vel_overlay[0][1],np.array(vel_overlay[1][0]),np.array(vel_overlay[1][1]), scale = scl, scale_units = 'inches')
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.25, 0.03, 0.5])
+    cbar_ax.set_title(r'FTLE (s$^{-1}$)',fontsize=10,y=1.02,x=0.6)
+    cbar = fig.colorbar(im,cbar_ax,format='%.1e')
+
+    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_bwd_ftle_subplot_comparison_vel_overlay.pdf",bbox_inches='tight')
+    # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
+    plt.show()
+
 # ~~~~~~~~~~~~~~  SETUP UNITS ~~~~~~~~~~~~~~
 lenunits = 'km' #units of distance for axis labels
 INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 2006 (initial time of magnetograms)

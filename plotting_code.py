@@ -180,4 +180,4 @@ def velocity_2x2_subplot(coords,labels, velocity, velocity_high_res, xlower, xup
     if save_name == False:
         plt.show()
     else:
-        plt.savefig(save_name, bbox_inches='tight')
+        plt.savefig(save_name, bbox_inches='tight', dpi=1000)

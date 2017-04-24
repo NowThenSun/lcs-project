@@ -33,7 +33,7 @@ ny = 50
 nx_dense = 200
 ny_dense = 200
 
-t_hrs = [0, 12, 6, 7]
+t_hrs = [5.5,6,6.5,7]
 t_hrs = np.array(t_hrs)
 t = t_hrs*60*60 + TIME[0]
 
@@ -58,7 +58,8 @@ for k in xrange(4):
     subplot_labels.append(time.strftime('%d-%b-%Y %H:%M UT', time.gmtime((t[k] + REF_TIME))))
 
 # print np.shape(vel)
-velocity_2x2_subplot(coords=coord_grid,labels=subplot_labels, velocity=vel,velocity_high_res=vel_high_res, xlower=X_min, xupper=X_max, ylower=Y_min, yupper=Y_max, save_name=False, lenunits = lenunits)
+velocity_2x2_subplot(coords=coord_grid,labels=subplot_labels, velocity=vel,
+    velocity_high_res=vel_high_res, xlower=X_min, xupper=X_max, ylower=Y_min, yupper=Y_max, save_name=False, lenunits = lenunits)
 
 
 
