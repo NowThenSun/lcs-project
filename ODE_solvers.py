@@ -15,9 +15,22 @@ import numpy as np
 
 def dp45(y, time, dt, derivs, atol, rtol):
 	'''
-	Subroutine that calculates one step of Dormand-Prince 4-5 method.
+	Subroutine that calculates one step of Dormand-Prince 5(4) method.
+	~~~~~~~~~
+	Inputs:
+	y						current position before step
+	time 					current time before step
+	dt						timestep to use for this step
+	derivs 					function that returns the derivatives of the positions (velocity)
+	atol 					absolute error tolerance
+	rtol 					relative error tolerance
+	~~~~~~~~~
+	Outputs:
+	y_next 					5th order approximation for the next position step
+	s						scaling factor to multiply the timestep by for efficient integration
+	error					error that should be < 1 for a step to be accepted
 	'''
-	# Initialise Runge-Kutta-Fehlberg coefficients
+	# Initialise DOPRI54 coefficients
 	a2 = [1/5]
 	a3 = [3/40. , 9/40. ]
 	a4 = [44/45. , -56/15. , 32/9. ]
@@ -35,8 +48,8 @@ def dp45(y, time, dt, derivs, atol, rtol):
 	k4 = dt*np.array(derivs(y + a4[0]*k1 + a4[1]*k2 + a4[2]*k3 ,time + np.sum(a4)*dt))
 	k5 = dt*np.array(derivs(y + a5[0]*k1 + a5[1]*k2 + a5[2]*k3 + a5[3]*k4, time + np.sum(a5)*dt))
 	k6 = dt*np.array(derivs(y + a6[0]*k1 + a6[1]*k2 + a6[2]*k3 + a6[3]*k4 + a6[4]*k5, time + np.sum(a6)*dt))
-	k7 = dt*np.array(derivs(y + a7[0]*k1 + a7[1]*k2 + a7[2]*k3 + a7[3]*k4 + a7[4]*k5 + a7[5]*k6, time + np.sum(a7)*dt)) # First same as last (FSAL) step in DP
-	# So k7 is the 5th order estimate for the next step in y
+	k7 = dt*np.array(derivs(y + a7[0]*k1 + a7[1]*k2 + a7[2]*k3 + a7[3]*k4 + a7[4]*k5 + a7[5]*k6, time + np.sum(a7)*dt)) # First same as last step used in DP (k7 is the 5th order estimate for the next step in y)
+
 	# 4th order estimate for y_next
 	Y_next = y + b1*k1 + b2*k2 + b3*k3 + b4*k4 + b5*k5 + b6*k6 + b7*k7
 	# 5th order estimate to be used for y_next
@@ -47,7 +60,6 @@ def dp45(y, time, dt, derivs, atol, rtol):
 	err = np.sqrt(0.5*((delta[0]/scale[0])**2+(delta[1]/scale[1])**2))
 	#print "shape of error:", np.shape(err)
 	# print err
-	#s =(atol*dt/(2.*delta))**0.25
 	safety_factor = 0.9
 	s = np.where(dt==0, 0., safety_factor*(1./err)**0.2)
 	#s = np.where(dt==0, 0., safety_factor*dt*(1./err)**0.25)
@@ -56,7 +68,7 @@ def dp45(y, time, dt, derivs, atol, rtol):
 
 def dp45_loop(derivs, aux_grid, t_0, int_time, dt_min, dt_max, maxiters, atol, rtol):
 	'''
-	Function that performs the looping/timestepping part of the RKF45 scheme for an auxiliary grid with timesteps varying for different points in the grid.
+	Function that performs the looping/timestepping part of the DOPRI54 scheme for an auxiliary grid with timesteps varying for different points in the grid.
 	~~~~~~~~~
 	Parameters:				Inputs:
 	derivs 					function that returns the derivatives of the positions (velocity)
