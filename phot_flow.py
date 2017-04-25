@@ -113,7 +113,7 @@ def ftle_phot(nx,ny,int_time,t_0):
     ev = np.linalg.eigvalsh(cgst)
     ev_max = np.amax(ev,-1)
     ftle = np.log(ev_max)/(2.*np.abs(int_time))
-    time_label = 'T = %+.1f h' %(int_time/3600.)
+    time_label = 'T = %+d h' %(int_time/3600.)
 
     return ftle, X_min, X_max, Y_min, Y_max, time_label
 
@@ -165,10 +165,9 @@ def subplot1x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
     # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
     plt.show()
 
-
-def subplot1x2_phot_alt(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=0, lenunits=False, colour_range=0,
-    g=1,s=0.5,r=0.5,sat=1, vel_overlay =0):
-    fig, (ax1, ax2) = plt.subplots(1, 2, sharey='row')#
+def subplot2x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=0, lenunits=False, colour_range=0,
+    g=1,s=0.5,r=0.5,sat=1):
+    fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharey='row', sharex='col')#
     #
     cmap = cubehelix_cmap(g=g,s=s,r=r,sat=sat)[1]
     ax1.set(adjustable='box-forced')
@@ -177,39 +176,51 @@ def subplot1x2_phot_alt(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_lab
     ax1.set_xlim([X_min,X_max])
     ax2.set_ylim([Y_min,Y_max])
     ax2.set_xlim([X_min,X_max])
+    ax3.set_ylim([Y_min,Y_max])
+    ax3.set_xlim([X_min,X_max])
+    ax4.set_ylim([Y_min,Y_max])
+    ax4.set_xlim([X_min,X_max])
+
 
     vmin = colour_range[0]
     vmax = colour_range[1]
-    im = ax1.imshow(ftle[0], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax)
-    ax2.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax)
-    #
-    ax1.axes.autoscale(True)
-    ax2.axes.autoscale(True)
+    im = ax1.imshow(ftle[0], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
+    ax2.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
+    ax3.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
+    ax4.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
+
+    # #
+    # ax1.axes.autoscale(True)
+    # ax2.axes.autoscale(True)
+    # ax3.axes.autoscale(True)
+    # ax4.axes.autoscale(True)
+
 
     if lenunits == False:
         fig.text(0.47, 0.05, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
         fig.text(0.05, 0.5, 'y (%s)' %lenunits, ha='center', va='center', rotation='vertical',fontsize=10)
     else:
-        fig.text(0.47, 0.23, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+        fig.text(0.47, 0.045, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
         fig.text(0.04, 0.5, 'y (%s)' %lenunits, ha='center', va='center', rotation='vertical',fontsize=10)
 
     if not main_label == 0:
-        fig.text(0.47, 0.77, main_label, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+        fig.text(0.47, 0.94, main_label, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
 
     if not subplot_labels == 0:
         ax1.set_title(subplot_labels[0],fontsize=10)
         ax2.set_title(subplot_labels[1],fontsize=10)
+        ax3.set_title(subplot_labels[2],fontsize=10)
+        ax4.set_title(subplot_labels[3],fontsize=10)
 
-    if not vel_overlay == 0:
-        scl = 6
-        ax2.quiver(vel_overlay[0][0],vel_overlay[0][1],np.array(vel_overlay[1][0]),np.array(vel_overlay[1][1]), scale = scl, scale_units = 'inches')
+
+
 
     fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.25, 0.03, 0.5])
+    cbar_ax = fig.add_axes([0.85, 0.1, 0.03, 0.75])
     cbar_ax.set_title(r'FTLE (s$^{-1}$)',fontsize=10,y=1.02,x=0.6)
     cbar = fig.colorbar(im,cbar_ax,format='%.1e')
 
-    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_bwd_ftle_subplot_comparison_vel_overlay.pdf",bbox_inches='tight')
+    # plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_ftle_2x2_int_time_comparison.pdf",bbox_inches='tight')
     # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
     plt.show()
 
@@ -220,23 +231,26 @@ INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 
 REF_TIME = INIT_TIME - TIME[0]
 
 t0 = TIME[0]+6*3600
-int_time=[-4*3600,-6*3600]
-nx_res = 100
+int_time=[-4*3600,-6*3600,-2*3600,-3600]
+nx_res = 1
 ftle_1 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[0], t_0 = t0)
 ftle_2 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[1], t_0 = t0)
+ftle_3 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[2], t_0 = t0)
+ftle_4 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[3], t_0 = t0)
 
-vnx = 50
-vny = 50
-grid_lim_step = 4
-X_min2,X_max2, Y_min2, Y_max2 = (X[grid_lim_step],X[-grid_lim_step-1],Y[grid_lim_step],Y[-grid_lim_step-1])  # Limit initial grid size
-# Compute nx*ny grid of coordinates
-xx = np.linspace(X_min2,X_max2, vnx)
-yy = np.linspace(Y_min2,Y_max2, vny)
-vel_coord_grid  = np.array(np.meshgrid(xx,yy,indexing='xy'))
-velocity = interp.regular_grid_interpolator_fn(U, V, X, Y, TIME)[0](vel_coord_grid, t0)
+
+# vnx = 50
+# vny = 50
+# grid_lim_step = 4
+# X_min2,X_max2, Y_min2, Y_max2 = (X[grid_lim_step],X[-grid_lim_step-1],Y[grid_lim_step],Y[-grid_lim_step-1])  # Limit initial grid size
+# # Compute nx*ny grid of coordinates
+# xx = np.linspace(X_min2,X_max2, vnx)
+# yy = np.linspace(Y_min2,Y_max2, vny)
+# vel_coord_grid  = np.array(np.meshgrid(xx,yy,indexing='xy'))
+# velocity = interp.regular_grid_interpolator_fn(U, V, X, Y, TIME)[0](vel_coord_grid, t0)
 # print a[1:-1]
-subplot1x2_phot((ftle_1[0],ftle_2[0]),*ftle_1[1:-1], main_label=time.strftime('%d-%b-%Y %H:%M UT', time.gmtime(t0+REF_TIME)),
-    subplot_labels=(ftle_1[-1],ftle_2[-1]),lenunits=lenunits, colour_range=(-0.0001,0.0001),g=1,s=0.7,r=1.2,sat=1,vel_overlay =(vel_coord_grid,velocity))
+subplot2x2_phot((ftle_1[0],ftle_2[0],ftle_3[0],ftle_4[0]),*ftle_1[1:-1], main_label=time.strftime('%d-%b-%Y %H:%M UT', time.gmtime(t0+REF_TIME)),
+    subplot_labels=(ftle_1[-1],ftle_2[-1],ftle_3[-1],ftle_4[-1]),lenunits=lenunits, colour_range=(-0.0001,0.0001),g=1,s=0.7,r=1.2,sat=1)
 #
 # int_times_hrs = [-12]
 # int_times_array = np.array(int_times_hrs)*3600
