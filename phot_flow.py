@@ -186,8 +186,8 @@ def subplot2x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
     vmax = colour_range[1]
     im = ax1.imshow(ftle[0], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
     ax2.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
-    ax3.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
-    ax4.imshow(ftle[1], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
+    ax3.imshow(ftle[2], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
+    ax4.imshow(ftle[3], cmap = cmap, origin = 'lower', extent=(X_min,X_max,Y_min,Y_max), vmin=vmin,vmax=vmax, aspect='auto')
 
     # #
     # ax1.axes.autoscale(True)
@@ -220,7 +220,7 @@ def subplot2x2_phot(ftle, X_min,X_max,Y_min,Y_max, main_label=0, subplot_labels=
     cbar_ax.set_title(r'FTLE (s$^{-1}$)',fontsize=10,y=1.02,x=0.6)
     cbar = fig.colorbar(im,cbar_ax,format='%.1e')
 
-    # plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_ftle_2x2_int_time_comparison.pdf",bbox_inches='tight')
+    plt.savefig("C:/Users/Harry/Google Drive/Project IV Lagrangian Coherent Structures/plots/phot/phot_ftle_2x2_int_time_comparison.pdf",bbox_inches='tight')
     # plt.savefig('dg_ftle_plot_T_var_A0-1_eps0-2_t00_vmax0-5.pdf', bbox_inches='tight')
     plt.show()
 
@@ -230,15 +230,15 @@ INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 
 # print time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime(INIT_TIME))
 REF_TIME = INIT_TIME - TIME[0]
 
-t0 = TIME[0]+6*3600
-int_time=[-4*3600,-6*3600,-2*3600,-3600]
-nx_res = 1
+t0 = TIME[0]+12*3600
+int_time=[-3*3600,-6*3600,-9*3600,-12*3600]
+nx_res = 400
 ftle_1 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[0], t_0 = t0)
 ftle_2 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[1], t_0 = t0)
 ftle_3 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[2], t_0 = t0)
 ftle_4 = ftle_phot(nx=nx_res,ny=nx_res,int_time=int_time[3], t_0 = t0)
 
-
+# Velocity grid calculation
 # vnx = 50
 # vny = 50
 # grid_lim_step = 4
