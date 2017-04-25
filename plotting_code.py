@@ -181,3 +181,46 @@ def velocity_2x2_subplot(coords,labels, velocity, velocity_high_res, xlower, xup
         plt.show()
     else:
         plt.savefig(save_name, bbox_inches='tight', dpi=1000)
+
+
+def velocity_singleplot(coords, velocity, velocity_high_res, xlower, xupper, ylower, yupper, save_name=False, lenunits = False):
+    fig, ax1 = plt.subplots(1, 1, sharex='col', sharey='row')#
+
+    cmap = plt.cm.inferno
+    vel_sq = np.sqrt(np.array(velocity_high_res)[0]**2+np.array(velocity_high_res)[1]**2)
+    vel_sq_rel = vel_sq/np.max(vel_sq)
+    print np.shape(velocity_high_res)
+    print np.shape(velocity)
+    if lenunits ==False:
+        fig.text(0.47, 0.04, 'x', ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+        fig.text(0.06, 0.5, 'y', ha='center', va='center', rotation='vertical',fontsize=10)
+    else:
+        fig.text(0.47, 0.04, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
+        fig.text(0.06, 0.5, 'y (%s)' %lenunits, ha='center', va='center', rotation='vertical',fontsize=10)
+
+    scl = 6
+    ax1.quiver(coords[0],coords[1], np.array(velocity[0]), np.array(velocity[1]), scale = scl, scale_units = 'inches')
+
+    ax1.set_ylim([ylower,yupper])
+    ax1.set_xlim([xlower,xupper])
+
+    alpha_im = 0.5
+    vel_max = np.max(vel_sq)
+    vel_min = np.min(vel_sq)
+    im = ax1.imshow(vel_sq, cmap = cmap, origin = 'lower', extent=(xlower,xupper,ylower,yupper), vmin=vel_min,vmax=vel_max,aspect='auto', alpha=alpha_im)
+    ax1.axes.autoscale(False)
+
+    fig.subplots_adjust(right=0.8)
+    cbar_ax = fig.add_axes([0.85, 0.12, 0.03, 0.7])
+    if lenunits == False:
+        cbar_ax.set_title('$|\mathbf{v}|$',fontsize=10,y=1.02,x=0.5)
+    else:
+        cbar_ax.set_title('$|\mathbf{v}|$ (%s/s)' %lenunits,fontsize=9,y=1.02,x=0.9)
+
+    cbar = fig.colorbar(im,cbar_ax)
+    cbar.solids.set_rasterized(True)
+
+    if save_name == False:
+        plt.show()
+    else:
+        plt.savefig(save_name, bbox_inches='tight', dpi=1000)
