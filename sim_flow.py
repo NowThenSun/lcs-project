@@ -27,10 +27,10 @@ hyd.close()
 # print U_hyd
 # print TIME_hyd[-1], TIME_hyd[0]
 #~~~~~~~~~~~~~~ INITIALISE PARAMETERS ~~~~~~~~~~~~~~~~~~~~~
-nx = 300
-ny = 300
+nx = 500
+ny = 500
 t_0 = TIME_hyd[10]                  # Initial time
-int_time  = 5#hydro data goes ~211-264
+int_time  = -2#hydro data goes ~211-264
 dt_min = np.sign(int_time)*0.01
 dt_max = np.sign(int_time)*0.1
 adaptive_error_tol = 10**-3
@@ -79,4 +79,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time, t_0, adap_error_tol=adaptive_error_tol)#, colour_range=(0,0.1))
+plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time=0, t_0=0, adap_error_tol=0,save_name = "sim_flow_test_bwd.pdf")#, colour_range=(0,0.1))
