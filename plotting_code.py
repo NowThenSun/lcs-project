@@ -52,7 +52,7 @@ def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time=0, t_0=0, adap_erro
         # Automatic colour bar range
         im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
             cmap=cubehelix_cmap(g,s,r,sat)[1])
-        cb = fig.colorbar(im, cax=cbar_ax,format='%.1e')
+        cb = fig.colorbar(im, cax=cbar_ax,format='%.1f')
 
     else:
         if not colour_rescale == 0:
@@ -64,7 +64,9 @@ def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time=0, t_0=0, adap_erro
             im = ax.imshow(ftle, interpolation='none', origin='lower', extent=(xlower,xupper, ylower, yupper),
                 cmap=cubehelix_cmap(g,s,r,sat)[1],
                 vmin=colour_range[0],vmax=colour_range[1]) #,aspect='auto'
-            cb = fig.colorbar(im, cax=cbar_ax,format='%.1e')
+            cb = fig.colorbar(im, cax=cbar_ax,format='%.1f')
+
+    cbar_ax.set_title('FTLE',fontsize=10,y=1.02,x=0.5)
 
     if not t_0 == 0:
         ax.text(0.1,1.02,'t_0 = %.1f' %t_0, transform=ax.transAxes)

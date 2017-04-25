@@ -79,4 +79,4 @@ ftle = np.log(ev_max)/(2.*np.abs(int_time))
 
 #
 # Plotting code for plot of eigenvalues/FTLE field
-plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time=0, t_0=0, adap_error_tol=0,save_name = "sim_flow_test_bwd.pdf")#, colour_range=(0,0.1))
+plot.FTLE_plot(ftle, X_min, X_max, Y_min, Y_max, int_time=0, t_0=0, adap_error_tol=0, colour_range=(-1.5,1.5), save_name = "sim_ftle_bwd_T-2_limclr.pdf")
