@@ -46,7 +46,7 @@ def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time=0, t_0=0, adap_erro
 
 
     fig.subplots_adjust(right=0.97)
-    cbar_ax = fig.add_axes([0.9, 0.15, 0.03, 0.7])
+    cbar_ax = fig.add_axes([0.9, 0.12, 0.03, 0.7])
 
     if colour_range == (0,0):
         # Automatic colour bar range
@@ -192,8 +192,8 @@ def velocity_singleplot(coords, velocity, velocity_high_res, xlower, xupper, ylo
     print np.shape(velocity_high_res)
     print np.shape(velocity)
     if lenunits ==False:
-        fig.text(0.47, 0.04, 'x', ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
-        fig.text(0.06, 0.5, 'y', ha='center', va='center', rotation='vertical',fontsize=10)
+        ax1.set_xlabel('x')
+        ax1.set_ylabel('y')
     else:
         fig.text(0.47, 0.04, 'x (%s)' %lenunits, ha='center', va='center', fontsize=10)  #A different way to add axes labels onto plots
         fig.text(0.06, 0.5, 'y (%s)' %lenunits, ha='center', va='center', rotation='vertical',fontsize=10)
@@ -207,11 +207,11 @@ def velocity_singleplot(coords, velocity, velocity_high_res, xlower, xupper, ylo
     alpha_im = 0.5
     vel_max = np.max(vel_sq)
     vel_min = np.min(vel_sq)
-    im = ax1.imshow(vel_sq, cmap = cmap, origin = 'lower', extent=(xlower,xupper,ylower,yupper), vmin=vel_min,vmax=vel_max,aspect='auto', alpha=alpha_im)
-    ax1.axes.autoscale(False)
+    im = ax1.imshow(vel_sq, cmap = cmap, origin = 'lower', extent=(xlower,xupper,ylower,yupper), vmin=vel_min,vmax=vel_max, alpha=alpha_im) #aspect='auto',
+    # ax1.axes.autoscale(False)
 
-    fig.subplots_adjust(right=0.8)
-    cbar_ax = fig.add_axes([0.85, 0.12, 0.03, 0.7])
+    fig.subplots_adjust(right=0.97)
+    cbar_ax = fig.add_axes([0.9, 0.12, 0.03, 0.7])
     if lenunits == False:
         cbar_ax.set_title('$|\mathbf{v}|$',fontsize=10,y=1.02,x=0.5)
     else:
@@ -224,3 +224,4 @@ def velocity_singleplot(coords, velocity, velocity_high_res, xlower, xupper, ylo
         plt.show()
     else:
         plt.savefig(save_name, bbox_inches='tight', dpi=1000)
+        plt.show()
