@@ -99,10 +99,10 @@ def FTLE_plot(ftle, xlower, xupper, ylower, yupper, int_time=0, t_0=0, adap_erro
     else:
         plt.savefig(save_name, bbox_inches='tight')
 
-def velocity_2x2_subplot(coords,labels, velocity, velocity_high_res, xlower, xupper, ylower, yupper, save_name=False, lenunits = False):
+def velocity_2x2_subplot(coords,labels, velocity, velocity_high_res, xlower, xupper, ylower, yupper, save_name=False, lenunits = False,g=1,s=1,r=1,sat=1):
     fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, sharex='col', sharey='row')#
 
-    cmap = plt.cm.plasma
+    cmap = cubehelix_cmap(g,s,r,sat)[0]
     print np.shape(velocity_high_res)
     vel_sq = np.sqrt(np.array(velocity_high_res)[:,0]**2+np.array(velocity_high_res)[:,1]**2)
     vel_sq_rel = vel_sq/np.max(vel_sq)
