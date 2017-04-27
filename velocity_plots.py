@@ -28,10 +28,10 @@ lenunits = 'km' #units of distance for axis labels
 INIT_TIME = 1165933440.0  # Epoch time (rel to Jan 1 1970) in seconds of Dec 12 2006 (initial time of magnetograms)
 print time.strftime('%d-%b-%Y %H:%M GMT', time.gmtime(INIT_TIME))
 REF_TIME = INIT_TIME - TIME[0]
-nx = 50
-ny = 50
-nx_dense = 200
-ny_dense = 200
+nx = 40
+ny = 40
+nx_dense = 260
+ny_dense = 260
 
 t_hrs = [5.5,6,6.5,7]
 t_hrs = np.array(t_hrs)
@@ -59,7 +59,7 @@ for k in xrange(4):
 
 # print np.shape(vel)
 velocity_2x2_subplot(coords=coord_grid,labels=subplot_labels, velocity=vel,
-    velocity_high_res=vel_high_res, xlower=X_min, xupper=X_max, ylower=Y_min, yupper=Y_max, save_name=False, lenunits = lenunits)
+    velocity_high_res=vel_high_res, xlower=X_min, xupper=X_max, ylower=Y_min, yupper=Y_max, save_name="phot_flow_velocity_subplots_chelixclr.pdf", lenunits = lenunits,g=0.7,s=1.2,r=2,sat =1)
 
 
 
